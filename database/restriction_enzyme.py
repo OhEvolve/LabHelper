@@ -27,7 +27,7 @@ class RestrictionEnzyme:
         """ Restriction enzyme input """
 
         default_name = 'XhoI'
-        database_fname = 'restriction_enzymes.xlsx'
+        database_fname = './database/restriction_enzymes.xlsx'
 
         # digestion settings
         self.settings = {

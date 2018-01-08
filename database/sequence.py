@@ -24,7 +24,7 @@ class Sequence:
 
         """ Restriction enzyme input """
 
-        self.database_folder = './sequences/'
+        self.database_folder = './database/sequences/'
 
         # digestion settings
         self.settings = {
@@ -37,10 +37,12 @@ class Sequence:
                 'concentration':None,
                 'form':None,
                 'tags':None,
-                'origin':None,
-                'codon':None,
-                'source':None,
-                'url':None
+                'origin':None, # what experiments produced fragment
+                'codon':None, # which codon set (typically 'standard')
+                'source':None, # what website, author, etc
+                'url':None, # background information
+                'break_5':None, # 5' backbone breaks
+                'break_3':None  # 3' backbone breaks
                    }
 
         # update settings
@@ -55,6 +57,17 @@ class Sequence:
         """ Select which reagent type """
 
         pass
+
+    def add_origin(self,origin):
+
+        """ Recursively add origin to sample """
+
+        if self.origin == None:
+            self.origin = [origin]
+        elif isinstance(self.origin,str):
+            self.origin = [self.origin,origin]
+        elif isinstance(self.origin,list):
+            self.origin.append(origin)
 
     def load(self,name = None):
 
@@ -92,13 +105,58 @@ class Sequence:
         info.append('Tags: {}'.format(self.tags))
         info.append('Codon set: {}'.format(self.codon_set))
         info.append('Origin: {}'.format(self.source))
+        info.append("5' strand breaks: {}".format(self.break_5))
+        info.append("3' strand breaks: {}".format(self.break_3))
         info.append('Distributor: {}'.format(self.source))
         info.append('More information: {}'.format(self.url))
         info.append(spacer*'-')
 
         # TODO: improve sequence display
         info.append('Sequence:')
-        info += [self.sequence[i:i+cc] for i in xrange(0,len(self.sequence),cc)]
+
+        ### CREATING SEQUENCE INTERPRETER ###
+
+        # interpret sequence form
+        if self.form == 'dsDNA':
+            form_disp = ':'*len(self.sequence)
+        elif len(self.form) == len(self.sequence):
+            form_disp = self.form
+        else:
+            print 'Unknown sequence form, leaving blank...'
+            form_disp = ' '*len(self.sequence)
+
+        # check for matching elements
+        notes = []
+        element_disp = ' '*len(self.sequence)
+        for element in self.elements:
+            el_len = len(element['sequence'])
+            try:
+                ind = self.sequence.index(element['sequence'])
+                if el_len >= len(element['name']) + 2:
+                    name = '|' + element['name'].center(el_len-2) + '|'
+                else:
+                    name = '|' + str(len(notes) + 1).center(el_len-2) + '|'
+                    notes.append('{} : {}'.format(len(notes) + 1,element['name']))
+                if element_disp[ind:ind+el_len] == ' '*el_len:
+                    element_disp = element_disp[:ind] + name + element_disp[ind+el_len:]
+                else:
+                    print 'Overlapping element...'
+            except ValueError:
+                continue
+
+        # create ruler
+        ruler_disp = ''.join(['{:10}'.format(i) for i in xrange(1,len(self.sequence)+1)])
+
+        #
+        for i in xrange(0,len(self.sequence),cc):
+            info.append(element_disp[i:i+cc])
+            info.append(self.sequence[i:i+cc])
+            info.append(ruler_disp[i:i+cc])
+            info.append(form_disp[i:i+cc])
+            info.append('')
+            
+        if len(notes) > 0:
+            info += [''] + notes + ['']
 
         info.append(spacer*'-')
 

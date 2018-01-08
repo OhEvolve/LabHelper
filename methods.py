@@ -110,11 +110,13 @@ def dict_update(base_dict,add_dict):
 
 #--------------------------------------#
 
-def obj_update(obj,*args,**kwargs):
+def obj_update(obj,modifications = None):
 
     """ Update object using internal settings """
 
-    if hasattr(obj,'settings'):
+    if isinstance(modifications,dict):
+        [setattr(obj,k,v) for k,v in modifications.items()]
+    elif hasattr(obj,'settings'):
         [setattr(obj,k,v) for k,v in obj.settings.items()]
     else:
         print 'No settings attribute detected, skipping update...'

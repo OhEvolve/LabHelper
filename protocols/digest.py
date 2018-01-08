@@ -8,15 +8,17 @@ Digest Experiment
 
 # standard libraries
 from re import finditer
+from copy import deepcopy
 
 # nonstandard libraries
 
 # homegrown libraries
-from mix import Mix
-from incubate import Incubate
-from sequence import Sequence
-from restriction_enzyme import RestrictionEnzyme
+from protocols.mix import Mix
+from protocols.incubate import Incubate
+from database.sequence import Sequence
+from database.restriction_enzyme import RestrictionEnzyme
 from methods import rcomp
+from methods import obj_update
 
 #--------------------------------------#
 #           Main     Methods           #
@@ -30,7 +32,7 @@ class Digest:
 
         # digestion settings
         settings = {
-                'input':None,
+                'sequence':None,
                 'enzyme':None
                    }
 
@@ -39,34 +41,35 @@ class Digest:
         settings.update(kwargs)
 
         # use defaults if input and enzymes not selected
-        if settings['input'] == None:
-            settings['input'] = 'XhoI-Plasmid'
+        if settings['sequence'] == None:
+            settings['sequence'] = 'XhoI-Plasmid'
         if settings['enzyme'] == None:
             settings['enzyme'] = 'XhoI'
 
         # check database for sequences
-        if isinstance(settings['input'],str):
-            sequence = Sequence(name=settings['input'])
+        if isinstance(settings['sequence'],str):
+            sequence = Sequence(name=settings['sequence'])
             sequence.load()
-        elif isinstance(settings['input'],object):
-            sequence = settings['input']
+        elif isinstance(settings['sequence'],object):
+            sequence = settings['sequence']
         else:
-            raise TypeError('Unknpwn input type passed to function <{}>!'.format(
-                type(settings['input'])))
+            raise TypeError('Unknpwn sequence type passed to function <{}>!'.format(
+                type(settings['sequence'])))
 
         # check database for enzyme
         # TODO: add compatibility for multiple enzyme reaction
         if isinstance(settings['enzyme'],str):
             enzyme = RestrictionEnzyme(name=settings['enzyme'])
-            enzyme.select_size()
-            enzyme_name = enzyme.name
-            enzyme_volume = (1./enzyme.units_per_ml,'mL')
-            enzyme_temp = (enzyme.active_temperature,'C')
         elif isinstance(settings['enzyme'],object):
-            sequence = settings['enzyme']
+            enzyme = settings['enzyme']
         else:
             raise TypeError('Unknpwn enzyme type passed to function <{}>!'.format(
                 type(settings['enzyme'])))
+        
+        enzyme.select_size()
+        enzyme_name = enzyme.name
+        enzyme_volume = (1./enzyme.units_per_ml,'mL')
+        enzyme_temp = (enzyme.active_temperature,'C')
 
 
         # TODO: break sequence at site
@@ -94,12 +97,16 @@ class Digest:
         self.protocols = [Mix(mix_settings),
                           Incubate(incubate_settings)]
 
+        # Output cut sequence object (breaks in backbone)
 
-        # build output dictionary
+        cut_sequence = deepcopy(sequence) # copies the sequence
 
-        output = _cut(sequence,enzyme)
+        breaks = _cut(cut_sequence,enzyme) # add backbone breaks
 
-        return output
+        obj_update(cut_sequence,breaks) # add breaks to sequence
+        cut_sequence.add_origin('digest with {}'.format(enzyme.name)) # add origin
+
+        self.output = cut_sequence
 
 
     def protocol(self):
@@ -153,17 +160,17 @@ def _cut(seq_obj,enzyme_obj):
 
         else:
             site_location = tuple(s if s < 0 else s + len(ecs) for s in esl)
-    
+
     # find break sites
-    break5 = [c + site_location[0] for c in cutsite_indices] + \
-             [len(ds_sequence) - (c + site_location[1]) for c in cutsite_indices_rev]
-    break3 = [c + site_location[1] for c in cutsite_indices] + \
-             [len(ds_sequence) - (c + site_location[0]) for c in cutsite_indices_rev]
+    break5 = list(set([c + site_location[0] for c in cutsite_indices] + \
+             [len(ds_sequence) - (c + site_location[1]) for c in cutsite_indices_rev]))
+    break3 = list(set([c + site_location[1] for c in cutsite_indices] + \
+             [len(ds_sequence) - (c + site_location[0]) for c in cutsite_indices_rev]))
 
     # create new sequence objects
-    for b5,b3 in zip(break5,break3)
+    assert len(break5) == len(break3), "Number of 5'/3' breaks not equal"
 
-    return 
+    return {"break_5":break5,"break_3":break3}
 
     # check if there actually is a cutsite in sequence
 
