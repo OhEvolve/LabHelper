@@ -38,7 +38,6 @@ class Sequence:
                 'form':None,
                 'tags':None,
                 'origin':None, # what experiments produced fragment
-                'codon':None, # which codon set (typically 'standard')
                 'source':None, # what website, author, etc
                 'url':None, # background information
                 'break_5':None, # 5' backbone breaks
@@ -140,21 +139,22 @@ class Sequence:
                 if element_disp[ind:ind+el_len] == ' '*el_len:
                     element_disp = element_disp[:ind] + name + element_disp[ind+el_len:]
                 else:
-                    print 'Overlapping element...'
+                    raw_input('Overlapping element...')
             except ValueError:
                 continue
 
         # create ruler
-        ruler_disp = ''.join(['{:10}'.format(i) for i in xrange(1,len(self.sequence)+1)])
+        ruler_disp = ''.join(['{: <10}'.format(i) for i in xrange(1,len(self.sequence)+1,10)])
 
-        #
+        # create lines to display text
         for i in xrange(0,len(self.sequence),cc):
             info.append(element_disp[i:i+cc])
             info.append(self.sequence[i:i+cc])
             info.append(ruler_disp[i:i+cc])
             info.append(form_disp[i:i+cc])
             info.append('')
-            
+
+        # 
         if len(notes) > 0:
             info += [''] + notes + ['']
 
