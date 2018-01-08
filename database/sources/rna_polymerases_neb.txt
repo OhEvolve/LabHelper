@@ -1,0 +1,60 @@
+URL: https://www.neb.com/tools-and-resources/selection-charts/rna-polymerase-selection-chart
+SOURCE: New England Biolabs
+Product	NEB #	Applications	Size
+T3 RNA Polymerase	M0378S	
+Radiolabeled RNA probes
+Non-isotopic RNA labeling
+Preparation of RNA vaccines
+Guide RNA for gene targeting
+mRNA for in vitro translation and micro injection
+RNA structure, processing and catalysis studies
+RNA amplification
+Anti-sense RNA for gene expression experiment
+5,000 units
+T7 RNA Polymerase	M0251S 
+M0251L	
+Radiolabeled RNA probes
+Non-isotopic RNA labeling
+Preparation of RNA vaccines
+Guide RNA for gene targeting
+mRNA for in vitro translation and micro injection 
+RNA structure, processing and catalysis studies
+RNA amplification
+Anti-sense RNA for gene expression experiment 
+5,000 units
+25,000 units
+SP6 RNA Polymerase	M0207S 
+M0207L	
+Radiolabeled RNA probe preparation
+Non-isotopic RNA labeling
+Preparation for RNA vaccines
+Guide RNA for gene targeting
+mRNA for in vitro translation and micro injection
+RNA structure, processing and catalysis studies
+RNA amplification
+Anti-sense RNA for gene expression experiment
+2,000 units
+10,000 units
+E. coli Poly(A) Polymerase	M0276S 
+M0276L	
+Labeling of RNA with ATP or cordycepin
+Poly(A) tailing of RNA for cloning or affinity purification
+Enhances translation of RNA transferred into eukaryotic cells.
+100 units
+500 units
+Poly(U) Polymerase	M0337S	
+Labeling of RNA with UTP
+Poly(U) and Poly(A) tailing of RNA for cloning
+Studying effects of poly(U) tailing on stability and translation of RNA transferred into eukaryotic cells
+Poly (A) tailing of 2' O-Me modified 3' ends
+60 units
+E. coli RNA Polymerase, Core Enzyme	M0550S	
+RNA synthesis from E. coli promoter
+Transcription initiation studies
+In vitro translation with PURExpress
+100 units
+E. coli RNA Polymerase, Holoenzyme	M0551S	
+RNA synthesis from E. coli promoter 
+Transcription initiation studies
+In vitro translation with PURExpress
+50 units

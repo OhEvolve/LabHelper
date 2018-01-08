@@ -1,0 +1,28 @@
+
+To-Do List:
+
+Protocols -
+
+Optimize -
+
+> codon_usage/
+>> 
+
+> protocols/
+>> error_prone_pcr.py
+>> amplification_pcr.py
+>> gel_extraction.py
+>> pcr_purification.py
+>> midiprep.py
+>> digestion.py
+>> library_creation.py
+>> yeast_selection.py
+>> yeast_selection_stringent.py
+>> yeast_sequencing.py
+>> bacteria_sequencing.py
+
+> database/reagents
+>> restriction_enzymes
+>> dna_polymerases
+>> rna_polymerases
+>> primers

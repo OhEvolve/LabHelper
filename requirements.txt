@@ -1,0 +1,14 @@
+Restriction enzymes
+---START---
+Traits/Name
+Traits/Target
+Traits/Cutsite
+Reaction/Reagents
+Storage/Concentration
+Storage/Temperature
+
+---STOP---
+Restriction enzymes
+---START---
+
+---STOP---

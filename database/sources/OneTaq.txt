@@ -1,0 +1,35 @@
+NAME: OneTaq
+URL: https://www.neb.com/protocols/0001/01/01/taq-dna-polymerase-with-standard-taq-buffer-m0273
+SOURCE: New England Biolabs
+
+Tradename	5′–>3′ Exonuclease	3′–>5′ Exonuclease	Error Rate(x10-6)a	Strand Displacement	Nick Translation	Thermal Stability	Km dNTPs	Km DNAd	Extend RNA Primer	Extension from Nick	Primary Applications
+OneTaq®
+DNA Polymerase	+	++	~140
+_r	+	++	 	 	–	+	PCR (routine, difficult)
+
+
+Component	25 μl reaction	50 μl reaction	Final Concentration
+5X OneTaq Standard 
+Reaction Buffer*	5 µl	10 μl	1X
+10 mM dNTPs (#N0447)	0.5 µl	1 μl	200 µM
+10 µM Forward Primer	0.5 µl	1 μl	0.2 µM
+10 µM Reverse Primer	0.5 µl	1 μl	0.2 µM
+OneTaq  DNA Polymerase	0.125 µl	0.25 µl	1.25 units/50 µl 
+PCR**
+Template DNA	variable	variable	< 1,000 ng
+Nuclease-free water	to 25 µl	to 50 µl	 
+
+Initial Denaturation	
+94°C	30 seconds
+30 Cycles	
+94°C	15-30 seconds
+45-68°C	15-60 seconds
+68°C	1 minute per kb
+Final Extension
+68°C	5 minutes
+Hold
+4-10°C	 
+
+DNA	Amount
+genomic	1 ng–1 µg
+plasmid or viral	1 pg–1 ng
