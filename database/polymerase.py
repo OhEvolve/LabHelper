@@ -20,7 +20,7 @@ from methods import comp
 #           Main     Methods           #
 #--------------------------------------#
 
-class RestrictionEnzyme:
+class Polymerase:
 
     def __init__(self,*args,**kwargs):
 

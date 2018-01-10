@@ -1,0 +1,42 @@
+
+----------------
+Basic operations
+----------------
+
+
+
+Common attributes:
+scale - "basic"
+prefix - None
+suffix - None
+
+Mix-
+    reagents - dictionary {str:tuple}
+    filler - str "dH2O"
+    total - tuple (50,'uL')
+
+Incubate-
+    temperature - tuple (23,'C')
+    time - tuple (5,'min')
+    movement - str "stationary"
+
+Centrifuge-
+    temperature - tuple (23,'C')
+    time - tuple (5,'min')
+    speed - tuple (1000,'g')
+
+Decant-
+
+Thermocycle-
+    steps - list [('Initial Degradation',(23,'C'),(5,'min')),
+                  ('Goto','Initial Degradation',24),
+                  ('Hold',(23,'C'))]
+
+Resuspend-
+    reagents - dictionary {str:tuple}
+
+Transfer-
+    container - str
+
+Operate- 
+    instructions - list [str, str, str ... ] 
