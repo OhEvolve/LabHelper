@@ -53,7 +53,7 @@ class PCR:
         elif isinstance(settings['sequence'],object):
             sequence = settings['sequence']
         else:
-            raise TypeError('Unknpwn sequence type passed to function <{}>!'.format(
+            raise TypeError('Unknown sequence type passed to function <{}>!'.format(
                 type(settings['sequence'])))
 
         # check database for enzyme
@@ -62,7 +62,7 @@ class PCR:
         elif isinstance(settings['enzyme'],object):
             enzyme = settings['enzyme']
         else:
-            raise TypeError('Unknpwn enzyme type passed to function <{}>!'.format(
+            raise TypeError('Unknown enzyme type passed to function <{}>!'.format(
                 type(settings['enzyme'])))
         
         enzyme.select_size()
