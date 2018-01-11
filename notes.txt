@@ -16,21 +16,21 @@ Mix-
     total - tuple (50,'uL')
 
 Incubate-
-    temperature - tuple (23,'C')
     time - tuple (5,'min')
     movement - str "stationary"
 
 Centrifuge-
-    temperature - tuple (23,'C')
     time - tuple (5,'min')
     speed - tuple (1000,'g')
 
 Decant-
+    action - str "discard"
 
 Thermocycle-
-    steps - list [('Initial Degradation',(23,'C'),(5,'min')),
-                  ('Goto','Initial Degradation',24),
-                  ('Hold',(23,'C'))]
+    steps - list [{'mode':'hold','temperature':(23,'C'),'time':(5,'min')),
+                  {'mode':'hold','temperature':(23,'C'),'time':(5,'min')),
+                  {'mode':'goto','step':2,'repeat':24},
+                  ('Hold',(23,'C'),('inf'))]
 
 Resuspend-
     reagents - dictionary {str:tuple}
@@ -39,4 +39,6 @@ Transfer-
     container - str
 
 Operate- 
+    machine - str "FPLC"
     instructions - list [str, str, str ... ] 
+

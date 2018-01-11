@@ -8,8 +8,8 @@ Common internal methods used throughout protocols
 # standard libraries
 
 # nonstandard libraries
-import openpyxl
-from openpyxl.utils import get_column_letter
+#import openpyxl
+#from openpyxl.utils import get_column_letter
 
 # homegrown libraries
 
