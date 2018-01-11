@@ -12,9 +12,11 @@ print digest.protocol()
 print digest.output.info()
 """
 
-from protocols.basics import * 
+from protocols.basics import basics
 
-mix_settings = {
+settings = {}
+
+settings['mix'] = {
     'reagents':
         {
         'sample':(1,'uL'),
@@ -26,21 +28,21 @@ mix_settings = {
     'temperature':(23,'C')
     }
 
-incubate_settings = {
+settings['incubate'] = {
         'time':(5,'min'),
         'movement':'stationary'
         }
 
-centrifuge_settings = {
+settings['centrifuge'] = {
         'time':(5,'min'),
         'speed':(1000,'g')
         }
 
-decant_settings = {
+settings['decant'] = {
         'action':'discard'
         }
 
-thermocycle_settings = {
+settings['thermocycle'] = {
         'steps':[{'mode':'hold','temperature':(23,'C'),'time':(5,'min')},
                  {'mode':'hold','temperature':(72,'C'),'time':(30,'sec')},
                  {'mode':'hold','temperature':(55,'C'),'time':(30,'sec')},
@@ -48,32 +50,27 @@ thermocycle_settings = {
                  {'mode':'hold','temperature':(4,'C'),'time':('inf','')}]
         }
 
-resuspend_settings = {
+settings['resuspend'] = {
     'reagents':{'dH2O':(100,'uL')}
         }
         
-transfer_settings = {
+settings['transfer'] = {
     'container':'Miniprep column'
     }
 
-operate_settings = {
+settings['operate'] = {
     'machine':'FPLC',
     'instructions':['Turn on',
                     'Run first protocol',
                     'Turn off']
     }
 
+basics = basics()
+
+for key,value in settings.items():
+    print '{}: {}'.format(key,basics[key](value))
 
 
-
-print 'Mix:',mix(mix_settings)
-print 'Incubate:',incubate(incubate_settings)
-print 'Centrifuge:',centrifuge(centrifuge_settings)
-print 'Decant:',decant(decant_settings)
-print 'Thermocycle:',thermocycle(thermocycle_settings)
-print 'Resuspend:',resuspend(resuspend_settings)
-print 'Transfer:',transfer(transfer_settings)
-print 'Operate:',operate(operate_settings)
 
 
 

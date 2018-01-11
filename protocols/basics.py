@@ -29,6 +29,7 @@ Centrifuge-
     speed - tuple (1000,'g')
 
 Decant-
+    action - str "discard" 
 
 Thermocycle-
     steps - list [('Initial Degradation',(23,'C'),(5,'min')),
@@ -44,6 +45,21 @@ Transfer-
 Operate- 
     instructions - list [str, str, str ... ] 
 """
+
+def basics():
+    return {
+            'mix':mix,
+            'incubate':incubate,
+            'centrifuge':centrifuge,
+            'decant':decant,
+            'thermocycle':thermocycle,
+            'resuspend':resuspend,
+            'transfer':transfer,
+            'operate':operate
+           }
+
+
+
 # ---------------------------------------------------------------------------- #
 
 def finalize(protocol,settings):
@@ -267,6 +283,23 @@ def operate(*args,**kwargs):
 
     for i,instruct in enumerate(settings['instructions']):
         protocol += '\n\t{}) {}'.format(letters[i],instruct)
+
+    return finalize(protocol,settings)
+
+# ---------------------------------------------------------------------------- #
+
+def add(*args,**kwargs):
+
+    """ Basic method: decant """
+
+    # method properties
+    settings = shared_properties() 
+    settings['reagent'] = None
+    
+    update(settings,args,kwargs) # update settings using inputs
+
+    protocol = 'At {}{}, decant sample and {} supernatent.'.format(
+            *settings['temperature'] + (settings['action'],))
 
     return finalize(protocol,settings)
 
