@@ -3,42 +3,34 @@
 Basic operations
 ----------------
 
+These are things performed to samples 
+
+Miniprep:
+Cell(bacteria,DNA) -> DNA
+
+Zymoprep:
+Cell(yeast,DNA) -> DNA
+
+Quikchange:
+Plasmid -> Plasmid, modified
+
+Gibson Assembly:
+Plasmid -> Plasmid, modified
+
+PCR:
+DNA -> DNA, increased concentration
+
+Digest:
+DNA,circular or linear -> DNA,linear 
+
+Transformation:
+DNA -> Cell(bacteria,DNA)
+
+Electroporation:
+DNA -> Cell(yeast,DNA)
+
+Transfection:
+DNA -> Cell(unknown,DNA)
 
 
-Common attributes:
-scale - "basic"
-prefix - None
-suffix - None
-
-Mix-
-    reagents - dictionary {str:tuple}
-    filler - str "dH2O"
-    total - tuple (50,'uL')
-
-Incubate-
-    time - tuple (5,'min')
-    movement - str "stationary"
-
-Centrifuge-
-    time - tuple (5,'min')
-    speed - tuple (1000,'g')
-
-Decant-
-    action - str "discard"
-
-Thermocycle-
-    steps - list [{'mode':'hold','temperature':(23,'C'),'time':(5,'min')),
-                  {'mode':'hold','temperature':(23,'C'),'time':(5,'min')),
-                  {'mode':'goto','step':2,'repeat':24},
-                  ('Hold',(23,'C'),('inf'))]
-
-Resuspend-
-    reagents - dictionary {str:tuple}
-
-Transfer-
-    container - str
-
-Operate- 
-    machine - str "FPLC"
-    instructions - list [str, str, str ... ] 
 

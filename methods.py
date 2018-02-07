@@ -122,6 +122,21 @@ def obj_update(obj,modifications = None):
         print 'No settings attribute detected, skipping update...'
 
 #--------------------------------------#
+
+def capitalize(my_str):
+
+    """ Capitalizes the first letter of each sentence/paragraph """
+    
+    # available capitalization indicators
+    inds = ['\n ','. ']
+    
+    # iterate through string breaks
+    for ind in inds:
+        my_str = ind.join([s[0].upper() + s[1:] for s in my_str.split(ind)])
+
+    return my_str
+
+#--------------------------------------#
 # TODO: consider faster alternatives (no indexing)
 #--------------------------------------#
 

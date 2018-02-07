@@ -4,14 +4,14 @@
 # nonstandard libraries
 
 # homegrown libraries
-from methods import convert_volume,fill_reaction
+from methods import convert_volume,fill_reaction,capitalize
 
 """
 Common attributes:
 scale - "basic"
 temperature - None
-prefix - None
-suffix - None
+preamble - None
+postamble - None
 
 Mix-
     reagents - dictionary {str:tuple}
@@ -38,6 +38,8 @@ Thermocycle-
 
 Resuspend-
     reagents - dictionary {str:tuple}
+    filler - str "dH2O"
+    total - tuple (50,'uL')
 
 Transfer-
     container - str
@@ -48,6 +50,7 @@ Operate-
 
 def basics():
     return {
+            'add':add,
             'mix':mix,
             'incubate':incubate,
             'centrifuge':centrifuge,
@@ -55,7 +58,10 @@ def basics():
             'thermocycle':thermocycle,
             'resuspend':resuspend,
             'transfer':transfer,
-            'operate':operate
+            'operate':operate,
+            'save':save,
+            'plate':plate,
+            'inoculate':inoculate
            }
 
 
@@ -63,10 +69,16 @@ def basics():
 # ---------------------------------------------------------------------------- #
 
 def finalize(protocol,settings):
-    """ Add prefix and suffix to protocol """
-    if settings['prefix']: protocol = settings['prefix'] + protocol
-    if settings['suffix']: protocol = protocol + settings['suffix'] 
-    return protocol
+    """ Add preamble and postamble to protocol """
+
+
+    # add temperature indication
+    if settings['temperature']: protocol = 'At {}{}, '.format(*settings['temperature']) + protocol
+    if settings['preamble']: protocol = '{}.\n '.format(settings['preamble']) + protocol
+    if settings['postamble']: protocol = protocol + '\n {}.'.format(settings['postamble'])
+
+    # return capitalized protocol
+    return capitalize(protocol)
 
 def update(my_dict,args,kwargs):
     """ Update settings using args/kwargs """
@@ -76,17 +88,68 @@ def update(my_dict,args,kwargs):
 def shared_properties():
     """ Shared properties among all methods """
     return {
-            'prefix':None,
-            'suffix':None,
-            'temperature':(23,'C'),
+            'preamble':None,
+            'postamble':None,
+            'temperature':None,
             'scale':'basic'
            }
+
+
+# ---------------------------------------------------------------------------- #
+
+def add(*args,**kwargs):
+
+    """ Basic method: add """
+
+    # method properties
+    settings = shared_properties() 
+    settings['reagents'] = None
+    settings['filler'] = None
+    settings['total'] = None
+    settings['target'] = 'sample'
+    
+    # update settings
+    update(settings,args,kwargs) # update settings using inputs
+
+    ### Find reagent volumes ###
+    # check if only one of (filler,total) are None
+    if bool(settings['filler']) != bool(settings['total']):
+        print 'Filler and total not simulatenously filled, resetting variables...'
+        settings['filler'],settings['total'] = None,None
+
+    # find reaction volumes if filler is used
+    if settings['filler'] and settings['total']:
+        abs_reagents = [(k,convert_volume(v,settings['total'])) 
+                for k,v in settings['reagents'].items()]
+        abs_reagents.append((settings['filler'],fill_reaction(settings['total'],*abs_reagents)))
+    else:
+        abs_reagents = [(k,v) for k,v in settings['reagents'].items()]
+
+    ### Build Protocol ###
+    # if only one reagent, concise description
+    if len(abs_reagents) == 1:
+        for k,v in abs_reagents:
+            protocol = 'add {} {} of {} to {}.'.format(v[0],v[1],k,settings['target'])
+    # if multiple reagents, list
+    else:
+        protocol = 'add the following reagents to {}:'.format(settings['target'])
+        for k,v in abs_reagents:
+            protocol += '\n\t> {} - {} {}'.format(k,*v)
+        protocol += '\nTotal reaction volume: {} {}'.format(*settings['total'])
+
+    # add temperature indication
+    if settings['temperature']:
+        protocol = 'At {}{}, '.format(*settings['temperature']) + protocol
+
+    # capatilize the first letter
+
+    return finalize(protocol,settings)
 
 # ---------------------------------------------------------------------------- #
 
 def mix(*args,**kwargs):
 
-    """ Basic method: mix """
+    """ Basic method: add """
 
     # method properties
     settings = shared_properties() 
@@ -94,18 +157,36 @@ def mix(*args,**kwargs):
     settings['filler'] = None
     settings['total'] = None
     
+    # update settings
     update(settings,args,kwargs) # update settings using inputs
 
-    # find reaction volumes
-    abs_reagents = [(k,convert_volume(v,settings['total'])) 
-            for k,v in settings['reagents'].items()]
-    abs_reagents.append((settings['filler'],fill_reaction(settings['total'],*abs_reagents)))
+    ### Find reagent volumes ###
+    # check if only one of (filler,total) are None
+    if bool(settings['filler']) != bool(settings['total']):
+        print 'Filler and total not simulatenously filled, resetting variables...'
+        settings['filler'],settings['total'] = None,None
 
-    # build protocol
-    protocol = 'At {}{}, mix the following reagents:'.format(*settings['temperature'])
-    for k,v in abs_reagents:
-        protocol += '\n\t> {} - {} {}'.format(k,*v)
-    protocol += '\nTotal reaction volume: {} {}'.format(*settings['total'])
+    # find reaction volumes if filler is used
+    if settings['filler'] and settings['total']:
+        abs_reagents = [(k,convert_volume(v,settings['total'])) 
+                for k,v in settings['reagents'].items()]
+        abs_reagents.append((settings['filler'],fill_reaction(settings['total'],*abs_reagents)))
+    else:
+        abs_reagents = [(k,v) for k,v in settings['reagents'].items()]
+
+    ### Build Protocol ###
+    # if only one reagent, concise description
+    if len(abs_reagents) == 1:
+        for k,v in abs_reagents:
+            protocol = 'mix {} {} of {} to the sample.'.format(v[0],v[1],k)
+    # if multiple reagents, list
+    else:
+        protocol = 'mix the following reagents:'
+        for k,v in abs_reagents:
+            protocol += '\n\t> {} - {} {}'.format(k,*v)
+        protocol += '\nTotal reaction volume: {} {}'.format(*settings['total'])
+
+    # capatilize the first letter
 
     return finalize(protocol,settings)
 
@@ -119,56 +200,18 @@ def incubate(*args,**kwargs):
     settings = shared_properties() 
     settings['time'] = None
     settings['movement'] = None
+    settings['target'] = None
     
     update(settings,args,kwargs) # update settings using inputs
 
-    protocol = 'Incubate at {}{} for {} {} while {}.'.format(
-            *settings['temperature'] + settings['time'] + (settings['movement'],))
+    if settings['movement']:
+        protocol = 'Incubate {} for {} {} while {}.'.format(
+                *(settings['target'],) + settings['time'] + (settings['movement'],))
+    else:
+        protocol = 'Incubate {} for {} {}.'.format(
+                *(settings['target'],) + settings['time'])
 
     return finalize(protocol,settings)
-
-# ---------------------------------------------------------------------------- #
-
-def my_method(*args,**kwargs):
-
-    """ Basic method: my_method """
-
-    # method properties
-    settings = shared_properties() 
-    settings['attr'] = None
-    
-    update(settings,args,kwargs) # update settings using inputs
-
-    protocol = ''
-
-    return finalize(protocol,settings)
-
-# ---------------------------------------------------------------------------- #
-
-def mix(*args,**kwargs):
-
-    """ Basic method: mix """
-
-    # method properties
-    settings = shared_properties() 
-    settings['reagents'] = None
-    settings['filler'] = None
-    settings['total'] = None
-
-    update(settings,args,kwargs) # update settings using inputs
-
-    # find reaction volumes
-    abs_reagents = [(k,convert_volume(v,settings['total'])) 
-            for k,v in settings['reagents'].items()]
-    abs_reagents.append((settings['filler'],fill_reaction(settings['total'],*abs_reagents)))
-
-    # build protocol
-    protocol = 'At {}{}, mix the following reagents:'.format(*settings['temperature'])
-    for k,v in abs_reagents:
-        protocol += '\n\t> {} - {} {}'.format(k,*v)
-    protocol += '\nTotal reaction volume: {} {}'.format(*settings['total'])
-
-    return protocol
 
 # ---------------------------------------------------------------------------- #
 
@@ -180,11 +223,14 @@ def centrifuge(*args,**kwargs):
     settings = shared_properties() 
     settings['time'] = None
     settings['speed'] = None
+    settings['target'] = 'sample' 
     
     update(settings,args,kwargs) # update settings using inputs
 
-    protocol = 'At {}{}, centrifuge sample at {} {} for {} {}.'.format(
-            *settings['temperature'] + settings['speed'] + settings['time'])
+    protocol = 'centrifuge {} at {} {} for {} {}.'.format(
+                        *(settings['target'],) + 
+                        settings['speed'] + 
+                        settings['time'])
 
     return finalize(protocol,settings)
 
@@ -196,14 +242,14 @@ def decant(*args,**kwargs):
 
     # method properties
     settings = shared_properties() 
-    settings['action'] = None
+    settings['action'] = 'discard' 
     
     update(settings,args,kwargs) # update settings using inputs
 
-    protocol = 'At {}{}, decant sample and {} supernatent.'.format(
-            *settings['temperature'] + (settings['action'],))
+    protocol = 'decant sample and {} supernatent.'.format(settings['action'])
 
     return finalize(protocol,settings)
+
 # ---------------------------------------------------------------------------- #
 
 def thermocycle(*args,**kwargs):
@@ -238,13 +284,24 @@ def resuspend(*args,**kwargs):
     # method properties
     settings = shared_properties() 
     settings['reagents'] = None
+    settings['target'] = 'sample'
 
     update(settings,args,kwargs) # update settings using inputs
 
+    # if no reagents, just resuspend with available liquid
+    if len(settings['reagents']) == 0:
+        protocol = 'Resuspend {}.'.format(settings['target'])
+    # if only one reagent, concise description
+    elif len(settings['reagents']) == 1:
+        for k,v in settings['reagents'].items():
+            protocol = 'Resuspend {} with {} {} of {}.'.format(settings['target'],v[0],v[1],k)
+    # if multiple reagents, list...
+    else:
+        protocol = 'Resuspend {} with:'.format(settings['target'])
+        for k,v in settings['reagents'].items():
+            protocol += '\n\t> {} - {} {}'.format(k,*v)
+
     # build protocol
-    protocol = 'At {}{}, resuspend sample with:'.format(*settings['temperature'])
-    for k,v in settings['reagents'].items():
-        protocol += '\n\t> {} - {} {}'.format(k,*v)
 
     return finalize(protocol,settings)
 
@@ -257,10 +314,11 @@ def transfer(*args,**kwargs):
     # method properties
     settings = shared_properties() 
     settings['container'] = None
+    settings['target'] = 'sample'
     
     update(settings,args,kwargs) # update settings using inputs
 
-    protocol = 'Transfer sample to {}.'.format(settings['container'])
+    protocol = 'Transfer {} to {}.'.format(settings['target'],settings['container'])
 
     return finalize(protocol,settings)
 
@@ -288,24 +346,93 @@ def operate(*args,**kwargs):
 
 # ---------------------------------------------------------------------------- #
 
-def add(*args,**kwargs):
-
-    """ Basic method: decant """
+def save(*args,**kwargs):
+    
+    """ Basic method: save """
 
     # method properties
     settings = shared_properties() 
-    settings['reagent'] = None
+    settings['target'] = 'sample'
     
     update(settings,args,kwargs) # update settings using inputs
 
-    protocol = 'At {}{}, decant sample and {} supernatent.'.format(
-            *settings['temperature'] + (settings['action'],))
+    protocol = 'Save {}.'.format(settings['target'])
+
+    return finalize(protocol,settings)
+
+# ---------------------------------------------------------------------------- #
+
+def plate(*args,**kwargs):
+    
+    """ Basic method: plate """
+
+    # method properties
+    settings = shared_properties() 
+    settings['target'] = 'sample'
+    settings['onto'] = None 
+    
+    update(settings,args,kwargs) # update settings using inputs
+
+    if settings['onto']:
+        protocol = 'Plate {} onto {}.'.format(settings['target'],settings['onto'])
+    else:
+        protocol = 'Plate {}.'.format(settings['target'],)
+
+    return finalize(protocol,settings)
+
+# ---------------------------------------------------------------------------- #
+
+def inoculate(*args,**kwargs):
+    
+    """ Basic method: inoculate """
+
+    # method properties
+    settings = shared_properties() 
+    settings['target'] = 'sample'
+    settings['reagents'] = None 
+    
+    update(settings,args,kwargs) # update settings using inputs
+
+
+    # if only one reagent, concise description
+    if len(settings['reagents']) == 1:
+        for k,v in settings['reagents'].items():
+            protocol = 'Inoculate {} {} of {} with {}.'.format(v[0],v[1],k,settings['target'])
+    # if multiple reagents, list...
+    else:
+        protocol = 'Inoculate {} into:'.format(settings['target'])
+        for k,v in settings['reagents'].items():
+            protocol += '\n\t> {} - {} {}'.format(k,*v)
+
+    return finalize(protocol,settings)
+
+# ---------------------------------------------------------------------------- #
+
+def my_method(*args,**kwargs):
+
+    """ Basic method: my_method """
+
+    # method properties
+    settings = shared_properties() 
+    settings['attr'] = None
+    
+    update(settings,args,kwargs) # update settings using inputs
+
+    protocol = ''
 
     return finalize(protocol,settings)
 
 # ---------------------------------------------------------------------------- #
     
-if __name__ == "__main__":
+def unit_tests():
+
+    add_settings = {
+        'reagents':
+            {
+            'buffer':(100,'uL'),
+            },
+        'temperature':(23,'C')
+        }
 
     mix_settings = {
         'reagents':
@@ -356,17 +483,33 @@ if __name__ == "__main__":
                         'Turn off']
         }
 
+    save_settings = {
+        'target':'elution',
+        'temperature':(4,'C')
+        }
 
+    plate_settings = {
+        'target':'sample',
+        'onto':'appropriate plates'
+        }
 
+    inoculate_settings = {
+        'target':'sample',
+        'reagents':{'LB':(100,'mL')}
+        }
 
-    print 'Mix:',mix(settings)
-    print 'Incubate:',incubate(settings)
-    print 'Centrifuge:',centrifuge(settings)
-    print 'Decant:',decant(settings)
-    print 'Thermocycle:',thermocycle(settings)
-    print 'Resuspend:',resuspend(settings)
-    print 'Transfer:',transfer(settings)
-    print 'Operate:',operate(settings)
+    print 'Add:',add(add_settings)
+    print 'Mix:',mix(mix_settings)
+    print 'Incubate:',incubate(incubate_settings)
+    print 'Centrifuge:',centrifuge(centrifuge_settings)
+    print 'Decant:',decant(decant_settings)
+    print 'Thermocycle:',thermocycle(thermocycle_settings)
+    print 'Resuspend:',resuspend(resuspend_settings)
+    print 'Transfer:',transfer(transfer_settings)
+    print 'Operate:',operate(operate_settings)
+    print 'Save:',save(save_settings)
+    print 'Plate:',plate(plate_settings)
+    print 'Inoculate:',inoculate(inoculate_settings)
 
 
 
