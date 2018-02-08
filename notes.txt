@@ -32,5 +32,15 @@ DNA -> Cell(yeast,DNA)
 Transfection:
 DNA -> Cell(unknown,DNA)
 
+Gel Electrophoresis ->
+DNA,soluble -> DNA,increased purity 
 
+RNA Extraction:
+Cell(RNA) -> RNA
+
+RT-PCR:
+RNA -> DNA
+
+Split cells:
+Cells -> Cells, decreased density
 
