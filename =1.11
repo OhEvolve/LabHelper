@@ -1,0 +1,2 @@
+Requirement already satisfied: Django in ./tutorial-env/lib/python3.6/site-packages
+Requirement already satisfied: pytz in ./tutorial-env/lib/python3.6/site-packages (from Django)
