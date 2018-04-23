@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.views.generic import CreateView, UpdateView
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -45,7 +45,13 @@ class CreateArticle(LoginRequiredMixin, CreateView):
         return super(CreateArticle, self).form_valid(form)
 
 
-class EditArticle(LoginRequiredMixin, UpdateView):
+# TODO: Limit permissions
+class EditArticle(UserPassesTestMixin, UpdateView):
+    #print('Current user:')
+    def test_func(self):
+        print('Current user:',self.request.user)
+        return True
+	     
     template_name = 'articles/edit.html'
     model = Article
     form_class = ArticleForm

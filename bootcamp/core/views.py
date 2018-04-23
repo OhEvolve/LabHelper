@@ -31,23 +31,6 @@ def deactivated(request):
 	return render(request, 'core/cover_after_deactivated.html')
 
 @login_required
-def network(request):
-    users_list = User.objects.filter(is_active=True).order_by('username')
-    paginator = Paginator(users_list, 100)
-    page = request.GET.get('page')
-    try:
-        users = paginator.page(page)
-
-    except PageNotAnInteger:
-        users = paginator.page(1)
-
-    except EmptyPage:  # pragma: no cover
-        users = paginator.page(paginator.num_pages)
-
-    return render(request, 'core/network.html', {'users': users})
-
-
-@login_required
 def profile(request, username):
     page_user = get_object_or_404(User, username=username)
     all_feeds = Feed.get_feeds().filter(user=page_user)

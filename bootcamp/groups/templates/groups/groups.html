@@ -2,22 +2,23 @@
 {% load staticfiles %}
 {% load i18n %}
 
-{% block title %}{% trans 'Network' %}{% endblock %}
+{% block title %}{% trans 'Group' %}{% endblock %}
 
 {% block head %}
-  <link href="{% static 'css/network.css' %}" rel="stylesheet">
+  <link href="{% static 'css/groups.css' %}" rel="stylesheet">
 {% endblock head %}
 
 {% block main %}
   <div class="page-header">
-    <h1>Network</h1>
+    <a href="{% url 'ask' %}" class="btn btn-primary pull-right">
+      <span class="glyphicon glyphicon-user"></span> {% trans "Join Group" %}
+    </a>
+    <a href="{% url 'create_group' %}" class="btn btn-primary pull-right">
+      <span class="glyphicon glyphicon-plus"></span> {% trans "New Group" %}
+    </a>
+    <h1>{% trans "Groups" %}</h1>
   </div>
 
-              <ul class="nav nav-tabs" style="margin-bottom: 1.4em">
-                <li{% if active == 'unanswered' %} class="active"{% endif %}><a href="{% url 'unanswered' %}">{% trans "Unanswered" %}</a></li>
-                <li{% if active == 'answered' %} class="active"{% endif %}><a href="{% url 'answered' %}">{% trans "Answered" %}</a></li>
-                <li{% if active == 'all' %} class="active"{% endif %}><a href="{% url 'all' %}">{% trans "All Questions" %}</a></li>
-              </ul>     
   
   <div class="users">
 

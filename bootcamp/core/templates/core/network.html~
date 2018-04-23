@@ -10,8 +10,16 @@
 
 {% block main %}
   <div class="page-header">
-    <h1>Network</h1>
+    <a href="{% url 'ask' %}" class="btn btn-primary pull-right">
+      <span class="glyphicon glyphicon-globe"></span> {% trans "Join Group" %}
+    </a>
+    <a href="{% url 'ask' %}" class="btn btn-primary pull-right">
+      <span class="glyphicon glyphicon-plus"></span> {% trans "New Group" %}
+    </a>
+    <h1>{% trans "Networks" %}</h1>
   </div>
+
+  
   <div class="users">
 
     <div class="row">
@@ -22,13 +30,7 @@
               <img src="{{ user.profile.get_picture }}" style="width:20px">
               <a href="{% url 'profile' user.username %}">{{ user.profile.get_screen_name }}</a>
             </div>
-            <div class="panel-body">
-            
-              <ul class="nav nav-tabs" style="margin-bottom: 1.4em">
-                <li{% if active == 'unanswered' %} class="active"{% endif %}><a href="{% url 'unanswered' %}">{% trans "Unanswered" %}</a></li>
-                <li{% if active == 'answered' %} class="active"{% endif %}><a href="{% url 'answered' %}">{% trans "Answered" %}</a></li>
-                <li{% if active == 'all' %} class="active"{% endif %}><a href="{% url 'all' %}">{% trans "All Questions" %}</a></li>
-              </ul>            
+            <div class="panel-body">         
             
               {% if user.profile.job_title %}
                 <p><strong>{% trans 'Job Title' %}:</strong> {{ user.profile.job_title }}</p>
