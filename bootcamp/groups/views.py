@@ -11,25 +11,18 @@ from django.urls import reverse_lazy
 
 from bootcamp.activities.models import Activity
 from bootcamp.decorators import ajax_required
-from bootcamp.groups.forms import GroupForm
-from bootcamp.groups.models import Group
+from bootcamp.groups.forms import GroupForm,JoinGroupForm
+from bootcamp.groups.models import Group,Membership
 
 @login_required
 def groups(request):
+	
     users_list = User.objects.filter(is_active=True).order_by('username')
     groups_list = Group.objects.order_by('group_name')
-    paginator = Paginator(users_list, 100)
-    page = request.GET.get('page')
-    try:
-        users = paginator.page(page)
-
-    except PageNotAnInteger:
-        users = paginator.page(1)
-
-    except EmptyPage:  # pragma: no cover
-        users = paginator.page(paginator.num_pages)
-
-    return render(request, 'groups/groups.html', {'groups':groups_list})
+    user = request.user
+    
+    return render(request, 'groups/groups.html', {'groups': groups_list,
+                                                  'user':   user})
 
 
 @login_required
@@ -41,9 +34,13 @@ def create_group(request):
         if form.is_valid():
             group_name = form.cleaned_data.get('group_name')
             description = form.cleaned_data.get('description')
+            user = request.user
             
-            new_group = Group.objects.create(group_name=group_name,description=description)
-            new_group.save()
+            group = Group.objects.create(group_name=group_name,description=description)
+            group.save()
+            
+            member = Membership.objects.create(user=user,group=group,status=3) # make creator admin
+            member.save()         
             
             # non-native fields
             #new_user.job_title = job_title
@@ -66,6 +63,7 @@ def create_group(request):
         return render(request, 'groups/create_group.html',
                       {'form': form})
 
+# UNUSED
 class CreateGroup(LoginRequiredMixin, CreateView):
     """
     """
@@ -82,27 +80,32 @@ class CreateGroup(LoginRequiredMixin, CreateView):
 
 @login_required
 def join_group(request):
+	 
+    form = JoinGroupForm(request.POST)
+	 
     if request.method == 'POST':
-        form = AnswerForm(request.POST)
         if form.is_valid():
+            group = form.cleaned_data.get('group')
             user = request.user
-            answer = Answer()
-            answer.user = request.user
-            answer.question = form.cleaned_data.get('question')
-            answer.description = form.cleaned_data.get('description')
-            answer.save()
-            user.profile.notify_answered(answer.question)
-            return redirect('/questions/{0}/'.format(answer.question.pk))
-
+            status = 2
+            
+            membership = Membership.objects.create(user=user,group=group,status=status)
+            membership.save()
+            
+            return redirect('/groups')
+            
         else:
-            question = form.cleaned_data.get('question')
-            return render(request, 'questions/question.html', {
-                'question': question,
+            group_name = form.cleaned_data.get('group')
+            return render(request, 'groups/join_group.html', {
+                'group': group,
                 'form': form
             })
 
+        
     else:
-        return redirect('/questions/')
+        
+        return render(request, 'groups/join_group.html',
+                      {'form': form})
         
         
         

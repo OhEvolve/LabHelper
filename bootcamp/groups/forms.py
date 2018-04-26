@@ -1,9 +1,10 @@
 from django import forms
 
-from bootcamp.groups.models import Group
+from bootcamp.groups.models import Group,Membership
 
 
 class GroupForm(forms.ModelForm):
+    """ Form for creating group """ 
     group_name = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         max_length=255)
@@ -14,3 +15,25 @@ class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
         fields = ['group_name', 'description', 'tags']
+
+
+class JoinGroupForm(forms.ModelForm):
+    """ Form for creating group """ 
+    group = forms.ModelChoiceField(
+        queryset=Group.objects.all(),
+        required=True)
+
+    class Meta:
+        model = Membership
+        fields = ['group']
+        
+        
+class LeaveGroupForm(forms.ModelForm):
+    """ Form for creating group """ 
+    group = forms.ModelChoiceField(
+        queryset=Group.objects.all(),
+        required=True)
+
+    class Meta:
+        model = Membership
+        fields = ['group']

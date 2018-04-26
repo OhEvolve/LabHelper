@@ -1,59 +1,35 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
 {% load i18n %}
 
-{% block title %}{% trans 'Group' %}{% endblock %}
-
-{% block head %}
-  <link href="{% static 'css/groups.css' %}" rel="stylesheet">
-{% endblock head %}
-
 {% block main %}
-  <div class="page-header">
-    <a href="{% url 'ask' %}" class="btn btn-primary pull-right">
-      <span class="glyphicon glyphicon-user"></span> {% trans "Join Group" %}
-    </a>
-    <a href="{% url 'create_group' %}" class="btn btn-primary pull-right">
-      <span class="glyphicon glyphicon-plus"></span> {% trans "New Group" %}
-    </a>
-    <h1>{% trans "Groups" %}</h1>
-  </div>
-
-  
-  <div class="users">
-
-    <div class="row">
-      {% for user in users %}
-        <div class="col-md-4">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <img src="{{ user.profile.get_picture }}" style="width:20px">
-              <a href="{% url 'profile' user.username %}">{{ user.profile.get_screen_name }}</a>
-            </div>
-            <div class="panel-body">         
-            
-              {% if user.profile.job_title %}
-                <p><strong>{% trans 'Job Title' %}:</strong> {{ user.profile.job_title }}</p>
-              {% endif %}
-              <p><strong>{% trans 'Username' %}: </strong> {{ user.username }}</p>
-              {% if user.profile.location %}
-                <p><strong>{% trans 'Location' %}:</strong> {{ user.profile.location }}</p>
-              {% endif %}
-              {% if user.profile.url %}
-                <p><strong>{% trans 'Url' %}:</strong> {{ user.profile.get_url }}</p>
-              {% endif %}
-            </div>
-          </div>
+  <ol class="breadcrumb">
+    <li><a href="{% url 'groups' %}">{% trans 'Groups' %}</a></li>
+    <li class="active">{% trans 'Join Group'  %}</li>
+  </ol>
+  <form action="{% url 'join_group' %}" method="post" class="form-horizontal" role="form">
+    {% csrf_token %}
+    {% for field in form.visible_fields %}
+      <div class="form-group{% if field.errors %} has-error{% endif %}">
+        <label for="{{ field.label }}" class="col-sm-2 control-label">{{ field.label }}</label>
+        <div class="col-sm-10">
+          {% if field.label == 'Description' %}
+            {% include 'markdown_editor.html' with textarea='id_description' %}
+          {% endif %}
+          {{ field }}
+          {% if field.help_text %}
+            <span class="help-block">{{ field.help_text }}</span>
+          {% endif %}
+          {% for error in field.errors %}
+            <label class="control-label">{{ error }}</label>
+          {% endfor %}
         </div>
-        {% if forloop.counter|divisibleby:3 %}</div><div class="row">{% endif %}
-      {% endfor %}
-    </div>
-
-    <div class="row">
-      <div class="col-md-12">
-        {% include 'paginator.html' with paginator=users %}
+      </div>
+    {% endfor %}
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-primary">{% trans 'Join Group' %}</button>
+        <a href="{% url 'groups' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
       </div>
     </div>
-
-  </div>
+  </form>
 {% endblock main %}

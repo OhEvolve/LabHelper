@@ -12,7 +12,7 @@
 
 {% block main %}
   <div class="page-header">
-    <a href="{% url 'ask' %}" class="btn btn-primary pull-right">
+    <a href="{% url 'join_group' %}" class="btn btn-primary pull-right">
       <span class="glyphicon glyphicon-user"></span> {% trans "Join Group" %}
     </a>
     <a href="{% url 'create_group' %}" class="btn btn-primary pull-right">
@@ -22,23 +22,15 @@
   </div>
 
 
-<div class="tab">
-  {% for group in groups %}
-    {% if group.group_name == 'Birnbaum Lab' %}
-      <button class="tablinks" onclick="openCity(event, '{{ group.group_name }}')" id="defaultOpen">{{ group.group_name }}</button>
-    {% else %}
-      <button class="tablinks" onclick="openCity(event, '{{ group.group_name }}')">{{ group.group_name }}</button>
-    {% endif %}
-  {% endfor %}
-</div>
-
-{% for group in groups %}
-
-  <div id={{ group.group_name }} class="tabcontent">
-    <h3>{{ group.group_name }}</h3>
-    <p>{{ group.description }}.</p>
+{% for membership in user.membership_set.all %}
+  <button class="accordion">{{ membership.group.group_name }}</button>
+  <div class="panel">
+      {% include 'groups/partial_group.html' with group=membership.group user=user %}
   </div>
-
+{% empty %}
+  <h4 class="no-data">{% trans "No groups to display, try joining one!" %}</h4>
 {% endfor %}
+
+<script> startAccordion(); </script>
 
 {% endblock main %}

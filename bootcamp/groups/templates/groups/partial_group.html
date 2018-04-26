@@ -1,0 +1,19 @@
+{% load humanize %}
+
+<h3>{{ group.group_name }}</h3>
+<p><b>Description:</b> {{ group.description }}</p>
+
+<p>Members:</p>
+{% for membership in group.membership_set.all %}
+  {% if membership.status == 1 %}
+    {{ membership.user.username }} <br>
+  {% elif membership.status == 2 %}
+    {{ membership.user.username }} <br>
+  {% elif membership.status == 3 %}
+    {{ membership.user.username }} (Admin)<br>
+  {% endif %}
+  
+{% empty %}
+  <i>No current members!</i>
+{% endfor %}
+
