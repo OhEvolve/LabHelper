@@ -11,7 +11,7 @@ from taggit.managers import TaggableManager
 
 @python_2_unicode_compatible
 class Group(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ManyToManyField(User, through='Membership')
     group_name = models.CharField(max_length=255)
     description = models.TextField(max_length=2000)
     create_date = models.DateTimeField(auto_now_add=True)
@@ -24,7 +24,27 @@ class Group(models.Model):
         ordering = ('-update_date',)
 
     def __str__(self):
-        return self.title
+        return self.group_name
+        
+class Membership(models.Model):
+
+    STATUS_SUBSCRIBED = 0
+    STATUS_UNSUBSCRIBED = 1
+    STATUS_REQUESTED = 2
+
+    STATUS = (
+    (STATUS_SUBSCRIBED, 'Joined'),
+    (STATUS_UNSUBSCRIBED, 'Unsubscribed'),
+    (STATUS_REQUESTED, 'Requested'),
+    )
+
+    user = models.ForeignKey(User)
+    group = models.ForeignKey(Group)
+    status = models.IntegerField(choices=STATUS)
+
+    added = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)      
+        
     '''
     @staticmethod
     def get_unanswered():
