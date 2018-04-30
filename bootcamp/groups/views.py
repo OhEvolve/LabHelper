@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.views.generic import CreateView
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseForbidden
-from django.shortcuts import get_object_or_404, redirect, render
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.urls import reverse_lazy
 
 from bootcamp.activities.models import Activity
@@ -21,6 +21,8 @@ def groups(request):
     groups_list = Group.objects.order_by('group_name')
     user = request.user
     
+    print('RENDER GROUPS')
+
     return render(request, 'groups/groups.html', {'groups': groups_list,
                                                   'user':   user})
 
@@ -145,7 +147,8 @@ def leave_group(request):
 
     if True:#membership.group.user == user: # TODO: create check for admin level permission
         membership.delete()
-        return HttpResponse()
+        print('HERE')
+        return HttpResponseRedirect(reverse('groups'))
 
     else:
         return HttpResponseForbidden()
