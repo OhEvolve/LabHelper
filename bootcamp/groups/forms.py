@@ -17,10 +17,10 @@ class GroupForm(forms.ModelForm):
         fields = ['group_name', 'description', 'tags']
 
 
-class JoinGroupForm(forms.ModelForm):
+class JoinRequestForm(forms.ModelForm):
     """ Form for creating group """ 
     group = forms.ModelChoiceField(
-        queryset=Group.objects.all(),
+        queryset = Group.objects.all(), # FILTER for non-user groups
         required=True)
 
     class Meta:

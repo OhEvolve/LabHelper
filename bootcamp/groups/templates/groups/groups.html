@@ -8,11 +8,12 @@
   <link href="{% static 'css/groups.css' %}" rel="stylesheet">
   <link href="{% static 'css/group_tabs.css' %}" rel="stylesheet">
   <script src="{% static 'js/group_tabs.js' %}"></script>
+  <script src="{% static 'js/groups.js' %}"></script>
 {% endblock head %}
 
 {% block main %}
   <div class="page-header">
-    <a href="{% url 'join_group' %}" class="btn btn-primary pull-right">
+    <a href="{% url 'join_request' %}" class="btn btn-primary pull-right">
       <span class="glyphicon glyphicon-user"></span> {% trans "Join Group" %}
     </a>
     <a href="{% url 'create_group' %}" class="btn btn-primary pull-right">
@@ -20,6 +21,13 @@
     </a>
     <h1>{% trans "Groups" %}</h1>
   </div>
+
+{% for message in messages %}
+  <div class="alert alert-success alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    {{ message }}
+  </div>
+{% endfor %}
 
 
 {% for membership in user.membership_set.all %}

@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load humanize %}
 
 <h3>{{ group.group_name }}</h3>
@@ -6,12 +7,26 @@
 <p>Members:</p>
 {% for membership in group.membership_set.all %}
   {% if membership.status == 1 %}
-    {{ membership.user.username }} <br>
+    <div class="row membership" membership-id="{{ membership.id }}">
+      {% csrf_token %}
+        {{ membership.user.username }} <span class="glyphicon glyphicon-ok accept-request" title="Click to accept">Accept</span>
+        <span class="glyphicon glyphicon-remove reject-request" title="Click to reject">Reject</span>
+    </div>
   {% elif membership.status == 2 %}
-    {{ membership.user.username }} <br>
+    {{ membership.user.username }} 
   {% elif membership.status == 3 %}
-    {{ membership.user.username }} (Admin)<br>
+    {{ membership.user.username }} (Admin)
   {% endif %}
+
+  {% if membership.user == user %}
+
+    <div class="row membership" membership-id="{{ membership.id }}">
+      {% csrf_token %}
+        <span class="glyphicon glyphicon-trash leave-group" title="Click to Leave Group">Leave Group</span>
+    </div>
+  {% endif %} 
+
+  <br>
   
 {% empty %}
   <i>No current members!</i>

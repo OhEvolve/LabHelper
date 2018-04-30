@@ -6,7 +6,7 @@
     <li><a href="{% url 'groups' %}">{% trans 'Groups' %}</a></li>
     <li class="active">{% trans 'Join Group'  %}</li>
   </ol>
-  <form action="{% url 'join_group' %}" method="post" class="form-horizontal" role="form">
+  <form action="{% url 'join_request' %}" method="post" class="form-horizontal" role="form">
     {% csrf_token %}
     {% for field in form.visible_fields %}
       <div class="form-group{% if field.errors %} has-error{% endif %}">
