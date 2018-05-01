@@ -11,7 +11,7 @@ from django.urls import reverse_lazy
 
 from bootcamp.activities.models import Activity
 from bootcamp.decorators import ajax_required
-from bootcamp.groups.forms import GroupForm,JoinRequestForm
+from bootcamp.groups.forms import GroupForm,JoinRequestForm,ManageGroupForm
 from bootcamp.groups.models import Group,Membership
 
 @login_required
@@ -28,7 +28,7 @@ def groups(request):
 
 @login_required
 def create_group(request):
-	 
+
     if request.method == 'POST':
 
         form = GroupForm(request.POST)
@@ -105,36 +105,79 @@ def join_request(request):
         
 
 @login_required
-@ajax_required
-def accept_request(request):
-    membership_id = request.POST['membership']
-    membership = Membership.objects.get(pk=membership_id)
+def old_manage_group(request):
 
-    user = request.user
+    print('HEREEE')
 
-    if True:#membership.group.user == user: # TODO: create check for admin level permission
-        membership.status = 2
-        membership.save()
-        return HttpResponse()
+    if request.method == 'POST':
+
+        form = GroupForm(request.POST)
+
+        if form.is_valid():
+            group_name = form.cleaned_data.get('group_name')
+            description = form.cleaned_data.get('description')
+            user = request.user
+            
+            group = Group.objects.create(group_name=group_name,description=description)
+            group.save()
+            
+            member = Membership.objects.create(user=user,group=group,status=3) # make creator admin
+            member.save()         
+            
+            messages.add_message(request,
+                    messages.SUCCESS,
+                    'Group created!')
+
+            return redirect('/groups')
+            
+        else:
+            group_name = form.cleaned_data.get('group_name')
+            description = form.cleaned_data.get('description')
+            return render(request, 'groups/create_group.html', {
+                'group_name': group_name,
+                'description':description,
+                'form': form
+            })
 
     else:
-        return HttpResponseForbidden()
 
+        form = GroupForm()
+        return render(request, 'groups/create_group.html',
+                      {'form': form})
 
+# TODO: require admin privileges
 @login_required
-@ajax_required
-def reject_request(request):
-    membership_id = request.POST['membership']
-    membership = Membership.objects.get(pk=membership_id)
+def manage_group(request):
 
-    user = request.user
+    print('Inside manager')
 
-    if True:#membership.group.user == user: # TODO: create check for admin level permission
-        membership.delete()
-        return HttpResponse()
+    group_id = request.POST['group']
+    group = Group.objects.get(pk=group_id)
 
-    else:
-        return HttpResponseForbidden()
+    if request.method == 'POST':
+        form = ManageGroupForm(request.POST)
+        if form.is_valid():
+            group.group_name = form.cleaned_data.get('group_name')
+            group.description = form.cleaned_data.get('description')
+            group.memberships = form.cleaned_data.get('memberships')
+            
+            group.save()
+            
+            messages.add_message(request,
+                    messages.SUCCESS,
+                    'Group properties saved!')
+
+            return redirect('/groups')
+            
+        else:
+            form = ManageGroupForm(instance=user, initial={
+                'group_name': group.group_name,
+                'description':group.description,
+                'form': group.form
+                })
+
+    return render(request, 'groups/manage_group.html', {'form': form})
+
         
         
 @login_required

@@ -9,8 +9,8 @@ urlpatterns = [
     url(r'^create_group/$', views.create_group, name='create_group'),
     # join group URLs (TODO)
     url(r'^join_request/$',   views.join_request,   name='join_request'),
-    url(r'^accept_request/$',   views.accept_request,   name='accept_request'),
-    url(r'^reject_request/$',   views.reject_request,   name='reject_request'),
+    # manage group
+    url(r'^manage_group/$',   views.manage_group,   name='manage_group'),
     # leave group (TODO)
     url(r'^leave_group/$',   views.leave_group,   name='leave_group'),
     # delete group (TODO)

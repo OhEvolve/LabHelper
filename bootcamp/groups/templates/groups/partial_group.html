@@ -7,23 +7,30 @@
 <p>Members:</p>
 {% for membership in group.membership_set.all %}
   {% if membership.status == 1 %}
-    <div class="row membership" membership-id="{{ membership.id }}">
-      {% csrf_token %}
-        {{ membership.user.username }} <span class="glyphicon glyphicon-ok accept-request" title="Click to accept">Accept</span>
-        <span class="glyphicon glyphicon-remove reject-request" title="Click to reject">Reject</span>
-    </div>
+    {{ membership.user.username }} 
   {% elif membership.status == 2 %}
     {{ membership.user.username }} 
   {% elif membership.status == 3 %}
-    {{ membership.user.username }} (Admin)
+  {{ membership.user.username }} <i>(Admin)</i>
   {% endif %}
 
   {% if membership.user == user %}
 
     <div class="row membership" membership-id="{{ membership.id }}">
       {% csrf_token %}
-        <span class="glyphicon glyphicon-trash leave-group" title="Click to Leave Group">Leave Group</span>
+        <!-- <span class="glyphicon glyphicon-remove reject-request" title="Click to reject">Reject</span> --!>
+        <a href="{% url 'groups' %}" class="btn btn-primary pull-right leave-group">
+          <span class="glyphicon glyphicon-remove"></span> {% trans "Leave Group" %}
+        </a>
     </div>
+
+    <div class="row group" group-id="{{ group.id }}">
+      {% csrf_token %}
+        <a href="{% url 'manage_group' %}" class="btn btn-primary pull-right manage-group">
+          <span class="glyphicon glyphicon-cog"></span> {% trans "Manage Group" %}
+        </a>
+    </div>
+
   {% endif %} 
 
   <br>

@@ -14,8 +14,21 @@ class GroupForm(forms.ModelForm):
 
     class Meta:
         model = Group
-        fields = ['group_name', 'description', 'tags']
+        fields = ['group_name', 'description']
 
+class ManageGroupForm(forms.ModelForm):
+    """ Form for creating group """ 
+    group_name = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=255)
+    description = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control'}),
+        max_length=2000)
+    #memberships = forms.ModelMultipleChoiceField()
+        
+    class Meta:
+        model = Group
+        fields = ['group_name', 'description']
 
 class JoinRequestForm(forms.ModelForm):
     """ Form for creating group """ 
@@ -28,6 +41,7 @@ class JoinRequestForm(forms.ModelForm):
         fields = ['group']
         
         
+'''
 class LeaveGroupForm(forms.ModelForm):
     """ Form for creating group """ 
     group = forms.ModelChoiceField(
@@ -37,3 +51,4 @@ class LeaveGroupForm(forms.ModelForm):
     class Meta:
         model = Membership
         fields = ['group']
+'''
