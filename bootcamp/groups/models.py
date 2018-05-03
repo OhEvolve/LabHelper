@@ -40,8 +40,8 @@ class Membership(models.Model):
     (STATUS_ADMIN, 'Admin'),
     )
 
-    user = models.ForeignKey(User)
-    group = models.ForeignKey(Group)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    group = models.ForeignKey(Group,on_delete=models.CASCADE)
     status = models.IntegerField(choices=STATUS)
 
     added = models.DateTimeField(auto_now_add=True)

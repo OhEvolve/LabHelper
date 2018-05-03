@@ -22,13 +22,11 @@
         <a href="{% url 'groups' %}" class="btn btn-primary pull-right leave-group">
           <span class="glyphicon glyphicon-remove"></span> {% trans "Leave Group" %}
         </a>
-    </div>
 
-    <div class="row group" group-id="{{ group.id }}">
-      {% csrf_token %}
-        <a href="{% url 'manage_group' %}" class="btn btn-primary pull-right manage-group">
-          <span class="glyphicon glyphicon-cog"></span> {% trans "Manage Group" %}
-        </a>
+    <a href="{% url 'manage_group' group.id %} " class="btn btn-primary pull-right manage-group">
+      <span class="glyphicon glyphicon-cog"></span> {% trans "Manage Group" %}
+    </a>
+
     </div>
 
   {% endif %} 

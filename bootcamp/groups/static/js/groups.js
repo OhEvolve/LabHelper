@@ -5,10 +5,11 @@ $(function () {
   $(".manage-group").click(function () {
 
     var span = $(this);
-    var membership = $(this).closest(".group").attr("group-id");
+    var group_id = $(this).closest(".group").attr("group-id");
     var csrf = $("input[name='csrfmiddlewaretoken']", $(this).closest(".group")).val();
     console.log(csrf)
     $.ajax({
+      //url: '/groups/manage_group/' + group_id "/",
       url: '/groups/manage_group/',
       data: {
         'group': group,

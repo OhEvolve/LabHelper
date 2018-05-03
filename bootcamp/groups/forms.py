@@ -1,7 +1,35 @@
 from django import forms
 
-from bootcamp.groups.models import Group,Membership
+from django.utils.safestring import mark_safe
+from django.contrib import admin 
 
+from bootcamp.groups.models import Group,Membership
+from bootcamp.authentication.models import User
+
+
+
+
+class MembershipForm(forms.ModelForm):
+
+    STATUS = (
+    (0, 'Requested'),
+    (1, 'Unsubscribed'),
+    (2, 'Joined'),
+    (3, 'Admin'),
+    )
+
+    user = forms.CharField(disabled=True)
+    status = forms.ChoiceField(choices=STATUS, widget=forms.RadioSelect())
+
+    """
+    status = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=40)
+    """
+
+    class Meta:
+        model = Membership
+        fields = ('user','status',)
 
 class GroupForm(forms.ModelForm):
     """ Form for creating group """ 
@@ -14,21 +42,23 @@ class GroupForm(forms.ModelForm):
 
     class Meta:
         model = Group
-        fields = ['group_name', 'description']
+        exclude = []
+        #fields = ['group_name', 'description']
 
 class ManageGroupForm(forms.ModelForm):
-    """ Form for creating group """ 
+
     group_name = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         max_length=255)
     description = forms.CharField(
         widget=forms.Textarea(attrs={'class': 'form-control'}),
         max_length=2000)
-    #memberships = forms.ModelMultipleChoiceField()
-        
+
     class Meta:
-        model = Group
+        model = Group 
         fields = ['group_name', 'description']
+
+
 
 class JoinRequestForm(forms.ModelForm):
     """ Form for creating group """ 
@@ -39,6 +69,8 @@ class JoinRequestForm(forms.ModelForm):
     class Meta:
         model = Membership
         fields = ['group']
+
+
         
         
 '''

@@ -8,10 +8,11 @@ from django.db.models import Q
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.urls import reverse_lazy
+from django.forms import formset_factory,inlineformset_factory
 
 from bootcamp.activities.models import Activity
 from bootcamp.decorators import ajax_required
-from bootcamp.groups.forms import GroupForm,JoinRequestForm,ManageGroupForm
+from bootcamp.groups.forms import GroupForm,JoinRequestForm,ManageGroupForm,MembershipForm
 from bootcamp.groups.models import Group,Membership
 
 @login_required
@@ -21,8 +22,6 @@ def groups(request):
     groups_list = Group.objects.order_by('group_name')
     user = request.user
     
-    print('RENDER GROUPS')
-
     return render(request, 'groups/groups.html', {'groups': groups_list,
                                                   'user':   user})
 
@@ -41,7 +40,7 @@ def create_group(request):
             group = Group.objects.create(group_name=group_name,description=description)
             group.save()
             
-            member = Membership.objects.create(user=user,group=group,status=3) # make creator admin
+            member = Membership.objects.create(user=user,group=group,status=3) 
             member.save()         
             
             messages.add_message(request,
@@ -101,65 +100,24 @@ def join_request(request):
         form = JoinRequestForm()
         return render(request, 'groups/join_request.html',
                       {'form': form})
-        
-        
 
-@login_required
-def old_manage_group(request):
-
-    print('HEREEE')
-
-    if request.method == 'POST':
-
-        form = GroupForm(request.POST)
-
-        if form.is_valid():
-            group_name = form.cleaned_data.get('group_name')
-            description = form.cleaned_data.get('description')
-            user = request.user
-            
-            group = Group.objects.create(group_name=group_name,description=description)
-            group.save()
-            
-            member = Membership.objects.create(user=user,group=group,status=3) # make creator admin
-            member.save()         
-            
-            messages.add_message(request,
-                    messages.SUCCESS,
-                    'Group created!')
-
-            return redirect('/groups')
-            
-        else:
-            group_name = form.cleaned_data.get('group_name')
-            description = form.cleaned_data.get('description')
-            return render(request, 'groups/create_group.html', {
-                'group_name': group_name,
-                'description':description,
-                'form': form
-            })
-
-    else:
-
-        form = GroupForm()
-        return render(request, 'groups/create_group.html',
-                      {'form': form})
 
 # TODO: require admin privileges
 @login_required
-def manage_group(request):
+def manage_group(request,group_id):
 
-    print('Inside manager')
-
-    group_id = request.POST['group']
     group = Group.objects.get(pk=group_id)
+    user = request.user
+    memberships = Membership.objects.filter(group=group).order_by('status')
 
     if request.method == 'POST':
         form = ManageGroupForm(request.POST)
+        formset = inlineformset_factory(Group,Membership,fields=('status',)) 
+
         if form.is_valid():
             group.group_name = form.cleaned_data.get('group_name')
             group.description = form.cleaned_data.get('description')
-            group.memberships = form.cleaned_data.get('memberships')
+            print('Get data:',form.cleaned_data.get('id_Taeyoon'))
             
             group.save()
             
@@ -169,16 +127,25 @@ def manage_group(request):
 
             return redirect('/groups')
             
-        else:
-            form = ManageGroupForm(instance=user, initial={
-                'group_name': group.group_name,
-                'description':group.description,
-                'form': group.form
-                })
+    else:
+        form = ManageGroupForm(instance=user, initial={
+            'group_name': group.group_name,
+            'description':group.description,
+            })
+        #MembershipFormSet = inlineformset_factory(MembershipForm,extra=0)
+        MembershipFormSet = inlineformset_factory(Group,Membership,fields=('status',)) 
+        formset = MembershipFormSet(initial=[{
+            'user':membership.user,
+            'status':membership.status}
+            for membership in memberships])
 
-    return render(request, 'groups/manage_group.html', {'form': form})
+    return render(request, 'groups/manage_group.html', {
+        'form': form,
+        'formset': formset,
+        'group_name':group.group_name,
+        'group_id':group_id
+        })
 
-        
         
 @login_required
 @ajax_required
@@ -190,7 +157,6 @@ def leave_group(request):
 
     if True:#membership.group.user == user: # TODO: create check for admin level permission
         membership.delete()
-        print('HERE')
         return HttpResponseRedirect(reverse('groups'))
 
     else:

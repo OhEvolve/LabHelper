@@ -1,14 +1,12 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-This is a webpage asasdfasdfas  
-
 {% block main %}
   <ol class="breadcrumb">
     <li><a href="{% url 'groups' %}">{% trans 'Groups' %}</a></li>
-    <li class="active">{% trans 'Create Group'  %}</li>
+    <li class="active">{% trans 'Manage Group' %}</li>
   </ol>
-  <form action="{% url 'manage_group' %}" method="post" class="form-horizontal" role="form">
+  <form action="{% url 'manage_group' group_id %}" method="post" class="form-horizontal" role="form">
     {% csrf_token %}
     {% for field in form.visible_fields %}
       <div class="form-group{% if field.errors %} has-error{% endif %}">
@@ -27,11 +25,19 @@ This is a webpage asasdfasdfas
         </div>
       </div>
     {% endfor %}
+
+    <form method="post">
+      <table>
+        {{ formset }}
+      </table>
+    </form>
+
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
-        <button type="submit" class="btn btn-primary">{% trans 'Create Group' %}</button>
+        <button type="submit" class="btn btn-primary">{% trans 'Edit Group' %}</button>
         <a href="{% url 'groups' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
       </div>
     </div>
+    
   </form>
 {% endblock main %}
