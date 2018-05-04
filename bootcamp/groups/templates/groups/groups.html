@@ -35,7 +35,7 @@
 {% for membership in user.membership_set.all %}
   <button class="accordion">{{ membership.group.group_name }}</button>
   <div class="panel">
-      {% include 'groups/partial_group.html' with group=membership.group user=user %}
+      {% include 'groups/partial_group.html' with group=membership.group user=user admin_groups=admin_groups %}
   </div>
 {% empty %}
   <h4 class="no-data">{% trans "No groups to display, try joining one!" %}</h4>

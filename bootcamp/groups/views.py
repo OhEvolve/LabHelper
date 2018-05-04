@@ -21,9 +21,11 @@ def groups(request):
     users_list = User.objects.filter(is_active=True).order_by('username')
     groups_list = Group.objects.order_by('group_name')
     user = request.user
+
     
     return render(request, 'groups/groups.html', {'groups': groups_list,
-                                                  'user':   user})
+                                                  'user':   user,
+                                                  'admin_groups': [m.group for m in user.membership_set.all() if m.status == 3]})
 
 @login_required
 def create_group(request):
@@ -67,15 +69,23 @@ def create_group(request):
 
 @login_required
 def join_request(request):
+
+    # find groups user is not member of
+    user = request.user
+    groups = Group.objects.all()
+    user_groups = [m.group for m in user.membership_set.all()]
+    new_user_groups = [(g.group_name,g) for g in groups if not g in user_groups]
 	 
     if request.method == 'POST':
 
-        form = JoinRequestForm(request.POST)
+        form = JoinRequestForm(request.POST,user_groups=new_user_groups)
 
         if form.is_valid():
             group = form.cleaned_data.get('group')
             user = request.user
             status = 1
+
+            print('Group?:',group)
             
             membership = Membership.objects.create(user=user,group=group,status=status)
             membership.save()
@@ -90,14 +100,15 @@ def join_request(request):
         else:
             group_name = form.cleaned_data.get('group')
             return render(request, 'groups/join_request.html', {
-                'group': group,
+                'group': group_name,
                 'form': form
             })
 
         
     else:
         
-        form = JoinRequestForm()
+
+        form = JoinRequestForm(user_groups=new_user_groups)
         return render(request, 'groups/join_request.html',
                       {'form': form})
 
@@ -108,20 +119,24 @@ def manage_group(request,group_id):
 
     group = Group.objects.get(pk=group_id)
     user = request.user
-    memberships = Membership.objects.filter(group=group).order_by('status')
+    memberships = Membership.objects.filter(group=group,status=1).order_by('status')
 
     if request.method == 'POST':
+
         form = ManageGroupForm(request.POST)
-        #formset = inlineformset_factory(Group,Membership,fields=('status',)) 
-        formset = formset_factory(MembershipForm)
+        MembershipFormSet = formset_factory(MembershipForm)
 
         if form.is_valid():
+
             group.group_name = form.cleaned_data.get('group_name')
             group.description = form.cleaned_data.get('description')
-            print('Get data:',form.cleaned_data.get('id_Taeyoon'))
-            
+
             group.save()
-            
+
+            for ind,membership in enumerate(memberships):
+                membership.status = int(request.POST['form-{}-status'.format(ind)])
+                membership.save()
+
             messages.add_message(request,
                     messages.SUCCESS,
                     'Group properties saved!')
@@ -134,7 +149,6 @@ def manage_group(request,group_id):
             'description':group.description,
             })
         MembershipFormSet = formset_factory(MembershipForm,extra=0)
-        #MembershipFormSet = inlineformset_factory(Group,Membership,fields=('status',)) 
         formset = MembershipFormSet(initial=[{
             'user':membership.user,
             'status':membership.status}

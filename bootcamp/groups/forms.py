@@ -3,25 +3,26 @@ from django import forms
 from django.utils.safestring import mark_safe
 from django.contrib import admin 
 
+#from crispy_forms.helper import FormHelper
+#from crispy_forms.bootstrap import InlineRadios
+
 from bootcamp.groups.models import Group,Membership
 from bootcamp.authentication.models import User
 
 
-
+class HorizontalRadioSelect(forms.RadioSelect):
+    temnplate_name = 'horizontal_select.html'
 
 class MembershipForm(forms.ModelForm):
 
     STATUS = (
-    (0, 'Requested'),
-    (1, 'Unsubscribed'),
-    (2, 'Joined'),
-    (3, 'Admin'),
+    (1, 'Pending'),
+    (2, 'Accept'),
+    (0, 'Reject'),
     )
 
     user = forms.CharField(disabled=True)
-    status = forms.ChoiceField(choices=STATUS, widget=forms.RadioSelect(attrs={
-                'display': 'inline-block'
-                    }))
+    status = forms.ChoiceField(choices=STATUS, widget=HorizontalRadioSelect())
 
     """
     status = forms.CharField(
@@ -32,6 +33,8 @@ class MembershipForm(forms.ModelForm):
     class Meta:
         model = Membership
         fields = ('user','status',)
+
+
 
 class GroupForm(forms.ModelForm):
     """ Form for creating group """ 
@@ -63,10 +66,21 @@ class ManageGroupForm(forms.ModelForm):
 
 
 class JoinRequestForm(forms.ModelForm):
+
+    """ Dynamically generate choices """
+    def __init__(self,*args,**kwargs):
+
+        user_groups = kwargs.pop('user_groups')
+        super(JoinRequestForm,self).__init__(*args,**kwargs)
+        self.fields['group'].choices = user_groups
+
     """ Form for creating group """ 
-    group = forms.ModelChoiceField(
-        queryset = Group.objects.all(), # FILTER for non-user groups
+    group = forms.ChoiceField(required=False, choices=[])
+    '''
+    group = forms.ChoiceField(
+        choices = Group.objects.none(), # FILTER for non-user groups
         required=True)
+    '''
 
     class Meta:
         model = Membership

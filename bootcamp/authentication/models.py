@@ -67,6 +67,9 @@ class Profile(models.Model):
             return no_picture
 
     def get_screen_name(self):
+        return self.user.username
+        # overriding username
+        '''
         try:
             if self.user.get_full_name():
                 return self.user.get_full_name()
@@ -76,6 +79,7 @@ class Profile(models.Model):
 
         except Exception:  # pragma: no cover
             return self.user.username
+        '''
 
     def notify_liked(self, feed):
         if self.user != feed.user:

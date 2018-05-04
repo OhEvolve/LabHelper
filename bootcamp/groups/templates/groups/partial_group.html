@@ -4,36 +4,45 @@
 <h3>{{ group.group_name }}</h3>
 <p><b>Description:</b> {{ group.description }}</p>
 
+
 <p>Members:</p>
 {% for membership in group.membership_set.all %}
-  {% if membership.status == 1 %}
-    {{ membership.user.username }} 
+
+  {% if membership.user == user %}<b>{% endif %}
+
+  {% if membership.status == 1 %} 
+    {{ membership.user.username }} <i>(Request Pending)</i>
   {% elif membership.status == 2 %}
     {{ membership.user.username }} 
   {% elif membership.status == 3 %}
-  {{ membership.user.username }} <i>(Admin)</i>
+    {{ membership.user.username }} <i>(Admin)</i>
   {% endif %}
 
-  {% if membership.user == user %}
+  {% if membership.user == user %}</b>{% endif %}
 
-    <div class="row membership" membership-id="{{ membership.id }}">
-      {% csrf_token %}
-        <!-- <span class="glyphicon glyphicon-remove reject-request" title="Click to reject">Reject</span> --!>
-        <a href="{% url 'groups' %}" class="btn btn-primary pull-right leave-group">
-          <span class="glyphicon glyphicon-remove"></span> {% trans "Leave Group" %}
-        </a>
+  <br>
+  
+{% empty %}
+
+  <i>No current members!</i>
+
+{% endfor %}
+
+<div class="row membership" membership-id="{{ membership.id }}">
+  {% csrf_token %}
+
+  {% if group in admin_groups %}
 
     <a href="{% url 'manage_group' group.id %} " class="btn btn-primary pull-right manage-group">
       <span class="glyphicon glyphicon-cog"></span> {% trans "Manage Group" %}
     </a>
 
-    </div>
+  {% endif %}
 
-  {% endif %} 
+  <a href="{% url 'groups' %}" class="btn btn-primary pull-right leave-group">
+    <span class="glyphicon glyphicon-remove"></span> {% trans "Leave Group" %}
+  </a>
 
-  <br>
-  
-{% empty %}
-  <i>No current members!</i>
-{% endfor %}
+</div>
+<br>
 
