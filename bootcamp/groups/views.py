@@ -112,7 +112,8 @@ def manage_group(request,group_id):
 
     if request.method == 'POST':
         form = ManageGroupForm(request.POST)
-        formset = inlineformset_factory(Group,Membership,fields=('status',)) 
+        #formset = inlineformset_factory(Group,Membership,fields=('status',)) 
+        formset = formset_factory(MembershipForm)
 
         if form.is_valid():
             group.group_name = form.cleaned_data.get('group_name')
@@ -132,8 +133,8 @@ def manage_group(request,group_id):
             'group_name': group.group_name,
             'description':group.description,
             })
-        #MembershipFormSet = inlineformset_factory(MembershipForm,extra=0)
-        MembershipFormSet = inlineformset_factory(Group,Membership,fields=('status',)) 
+        MembershipFormSet = formset_factory(MembershipForm,extra=0)
+        #MembershipFormSet = inlineformset_factory(Group,Membership,fields=('status',)) 
         formset = MembershipFormSet(initial=[{
             'user':membership.user,
             'status':membership.status}

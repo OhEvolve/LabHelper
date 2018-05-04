@@ -19,7 +19,9 @@ class MembershipForm(forms.ModelForm):
     )
 
     user = forms.CharField(disabled=True)
-    status = forms.ChoiceField(choices=STATUS, widget=forms.RadioSelect())
+    status = forms.ChoiceField(choices=STATUS, widget=forms.RadioSelect(attrs={
+                'display': 'inline-block'
+                    }))
 
     """
     status = forms.CharField(

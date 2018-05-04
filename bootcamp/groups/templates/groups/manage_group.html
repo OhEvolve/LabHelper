@@ -26,11 +26,30 @@
       </div>
     {% endfor %}
 
-    <form method="post">
-      <table>
-        {{ formset }}
-      </table>
-    </form>
+    {% for form in formset %}
+    {% for field in form.visible_fields %}
+      <div class="form-group{% if field.errors %} has-error{% endif %}">
+        <label for="{{ field.label }}" class="col-sm-2 control-label">{{ field.label }}</label>
+        <div class="col-sm-10">
+          {% if field.label == 'Status' %}
+            {% for radio in field.status %}
+              <label for="{{ radio.id_for_label }}">
+                  {{ radio.choice_label }}
+              <span class="radio">{{ radio.tag }}</span>
+            </label>
+          {% endfor %}
+          {% endif %}
+          {{ field }}
+          {% if field.help_text %}
+            <span class="help-block">{{ field.help_text }}</span>
+          {% endif %}
+          {% for error in field.errors %}
+            <label class="control-label">{{ error }}</label>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+    {% endfor %}
 
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
