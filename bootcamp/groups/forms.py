@@ -47,8 +47,7 @@ class GroupForm(forms.ModelForm):
 
     class Meta:
         model = Group
-        exclude = []
-        #fields = ['group_name', 'description']
+        fields = ['group_name', 'description']
 
 class ManageGroupForm(forms.ModelForm):
 
@@ -72,15 +71,12 @@ class JoinRequestForm(forms.ModelForm):
 
         user_groups = kwargs.pop('user_groups')
         super(JoinRequestForm,self).__init__(*args,**kwargs)
-        self.fields['group'].choices = user_groups
+        self.fields['group'].queryset = user_groups
 
     """ Form for creating group """ 
-    group = forms.ChoiceField(required=False, choices=[])
-    '''
-    group = forms.ChoiceField(
-        choices = Group.objects.none(), # FILTER for non-user groups
+    group = forms.ModelChoiceField(
+        queryset = Group.objects.all(), # FILTER for non-user groups
         required=True)
-    '''
 
     class Meta:
         model = Membership

@@ -73,8 +73,7 @@ def join_request(request):
     # find groups user is not member of
     user = request.user
     groups = Group.objects.all()
-    user_groups = [m.group for m in user.membership_set.all()]
-    new_user_groups = [(g.group_name,g) for g in groups if not g in user_groups]
+    new_user_groups = Group.objects.all().exclude(membership__user__username=user.username)
 	 
     if request.method == 'POST':
 
