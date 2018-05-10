@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+
+{% block head %}
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="{% static 'css/w3.css' %}">
+    <link rel="stylesheet" href="{% static 'css/font-Raleway.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/reagent-tab.css' %}">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.css"/>
+	<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.js"/></script>
+
+{% endblock head %}
+
+{% block main %}
+
+  <div class="page-header">
+    <a href="{% url 'join_request' %}" class="btn btn-primary pull-right">
+      <span class="glyphicon glyphicon-user"></span> {% trans "Join Group" %}
+    </a>
+    <a href="{% url 'create_group' %}" class="btn btn-primary pull-right">
+      <span class="glyphicon glyphicon-plus"></span> {% trans "New Group" %}
+    </a>
+    <h1>{% trans "Reagents" %}</h1>
+  </div>
+
+
+<div id="reagents" class="tabcontent">
+
+  <div class="reagent-tab">
+    <button class="reagent-tablinks" onclick="openReagentTab(event, 'Liquids')">Liquids</button>
+    <button class="reagent-tablinks" onclick="openReagentTab(event, 'Solids')">Solids</button>
+    <button class="reagent-tablinks" onclick="openReagentTab(event, 'Biologics')">Biologics</button>
+    <button class="reagent-tablinks" onclick="openReagentTab(event, 'Solutions')">Solutions</button>
+  </div>
+
+
+
+  <!-- Tab content -->
+  <div id="Liquids" class="reagent-tabcontent">
+    <a href="{% url 'join_request' %}" class="btn btn-primary pull-right">
+      <span class="glyphicon glyphicon-user"></span> {% trans "Join Group" %}
+    </a>
+    <h3>Liquids</h3>
+    <table id="example" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Owner</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for liquid in liquids %}
+            <tr>
+                <td><a href="reagents/liquid/{{ liquid.id }}" target="_blank">{{ liquid.name }}</a></td>
+                <td>{{ liquid.owner }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>
+
+
+  <div id="Solids" class="reagent-tabcontent">
+    <h3>Solids</h3>
+    <table id="example" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Owner</th>
+                <th>Molecular Weight</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for solid in solids %}
+            <tr>
+                <td><a href="reagents/solid/{{ solid.id }}" target="_blank">{{ solid.name }}</a></td>
+                <td>{{ solid.owner }}</td>
+                <td>{{ solid.mw }} {{ solid.mw_units }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>
+
+
+
+  <div id="Biologics" class="reagent-tabcontent">
+    <h3>Biologics</h3>
+    <table id="example" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Owner</th>
+                <th>Form</th>
+                <th>Material</th>
+                <th>Shape</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for biologic in biologics %}
+            <tr>
+                <td><a href="reagents/biologic/{{ biologic.id }}" target="_blank">{{ biologic.name }}</a></td>
+                <td>{{ biologic.owner }}</td>
+                <td>{{ biologic.form}}</td>
+                <td>{{ biologic.material}}</td>
+                <td>{{ biologic.shape}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>
+
+
+
+  <div id="Solutions" class="reagent-tabcontent">
+    <h3>Solutions</h3>
+    <table id="example" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Owner</th>
+                <th>Liquids</th>
+                <th>Solids</th>
+                <th>Biologics</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for solution in solutions %}
+            <tr>
+                <td><a href="reagents/solution/{{ solution.id }}" target="_blank">{{ solution.name }}</a></td>
+                <td>{{ solution.owner }}</td>
+                <td>{{ solution.liquids.all|join:", " }}</td>
+                <td>{{ solution.solids.all|join:", " }}</td>
+                <td>{{ solution.biologics.all|join:", " }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>
+
+
+
+</div>
+
+
+
+<!-- JavaScript Functions -->
+
+<script type="text/javascript" charset="utf8" src="{% static 'js/main.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'js/reagent-tab.js' %}"></script>
+
+
+
+<!-- JavaScript Initialization -->
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $('table.display').DataTable({
+        "columnDefs": [
+        {"className": "dt-center", "targets": "_all"}
+      ]
+    });
+});
+</script>
+
+</body>
+
+{% endblock main %}
+
+

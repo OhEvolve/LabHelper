@@ -42,6 +42,6 @@ def reagents(request):
     user = request.user
 
     
-    return render(request, 'reagents/reagents.html', {'groups': groups_list,
+    return render(request, 'groups/groups.html', {'groups': groups_list,
                                                   'user':   user,
                                                   'admin_groups': [m.group for m in user.membership_set.all() if m.status == 3]})

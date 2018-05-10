@@ -78,6 +78,7 @@ LOCAL_APPS = [
     'bootcamp.feeds',
     'bootcamp.messenger',
     'bootcamp.questions',
+    'bootcamp.reagents',
     'bootcamp.search',
     'bootcamp.groups',
 ]
