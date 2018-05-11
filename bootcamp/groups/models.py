@@ -16,6 +16,7 @@ class Group(models.Model):
     description = models.TextField(max_length=2000)
     create_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now_add=True)
+    is_private = models.BooleanField(default=False)
     tags = TaggableManager()
 
     class Meta:
@@ -34,11 +35,11 @@ class Membership(models.Model):
     STATUS_ADMIN = 3
 
     STATUS = (
-    (STATUS_UNSUBSCRIBED, 'Requested'),
-    (STATUS_REQUESTED, 'Unsubscribed'),
-    (STATUS_SUBSCRIBED, 'Joined'),
-    (STATUS_ADMIN, 'Admin'),
-    )
+        (STATUS_UNSUBSCRIBED, 'Requested'),
+        (STATUS_REQUESTED, 'Unsubscribed'),
+        (STATUS_SUBSCRIBED, 'Joined'),
+        (STATUS_ADMIN, 'Admin'),
+        )
 
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     group = models.ForeignKey(Group,on_delete=models.CASCADE)
@@ -48,7 +49,6 @@ class Membership(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
     
     class Meta:
-        verbose_name = 'Membership'
         verbose_name = 'Memberships'
         unique_together = ["user", "group"]
         

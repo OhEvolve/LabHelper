@@ -23,9 +23,10 @@ def groups(request):
     user = request.user
 
     
-    return render(request, 'groups/groups.html', {'groups': groups_list,
-                                                  'user':   user,
-                                                  'admin_groups': [m.group for m in user.membership_set.all() if m.status == 3]})
+    return render(request, 'groups/groups.html', {
+        'groups': groups_list,
+        'user':   user,
+        'admin_groups': [m.group for m in user.membership_set.all() if m.status == 3]})
 
 @login_required
 def create_group(request):

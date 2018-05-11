@@ -1,13 +1,6 @@
 from django import forms
 
-from django.utils.safestring import mark_safe
-from django.contrib import admin 
-
-#from crispy_forms.helper import FormHelper
-#from crispy_forms.bootstrap import InlineRadios
-
 from bootcamp.groups.models import Group,Membership
-from bootcamp.authentication.models import User
 
 
 class HorizontalRadioSelect(forms.RadioSelect):
@@ -49,6 +42,7 @@ class GroupForm(forms.ModelForm):
         model = Group
         fields = ['group_name', 'description']
 
+
 class ManageGroupForm(forms.ModelForm):
 
     group_name = forms.CharField(
@@ -75,7 +69,7 @@ class JoinRequestForm(forms.ModelForm):
 
     """ Form for creating group """ 
     group = forms.ModelChoiceField(
-        queryset = Group.objects.all(), # FILTER for non-user groups
+        queryset = Group.objects.none(),
         required=True)
 
     class Meta:

@@ -42,28 +42,31 @@
     <button class="reagent-tablinks" onclick="openReagentTab(event, 'Solids')">Solids</button>
     <button class="reagent-tablinks" onclick="openReagentTab(event, 'Biologics')">Biologics</button>
     <button class="reagent-tablinks" onclick="openReagentTab(event, 'Solutions')">Solutions</button>
+    <button class="reagent-tablinks" onclick="openReagentTab(event, 'Cells')">Cells</button>
   </div>
 
 
 
   <!-- Tab content -->
   <div id="Liquids" class="reagent-tabcontent">
-    <a href="{% url 'join_request' %}" class="btn btn-primary pull-right">
-      <span class="glyphicon glyphicon-user"></span> {% trans "Join Group" %}
+    <a href="{% url 'create_liquid' %}" class="btn btn-primary pull-right">
+      <span class="glyphicon glyphicon-user"></span> {% trans "Add Liquid" %}
     </a>
     <h3>Liquids</h3>
     <table id="example" class="display" cellspacing="0" width="100%">
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Owner</th>
+                <th>Creator</th>
+                <th>Owners</th>
             </tr>
         </thead>
         <tbody>
             {% for liquid in liquids %}
             <tr>
                 <td><a href="reagents/liquid/{{ liquid.id }}" target="_blank">{{ liquid.name }}</a></td>
-                <td>{{ liquid.owner }}</td>
+                <td>{{ liquid.creator }}</td>
+                <td>{{ liquid.groups.all|join:", " }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -72,6 +75,9 @@
 
 
   <div id="Solids" class="reagent-tabcontent">
+    <a href="{% url 'join_request' %}" class="btn btn-primary pull-right">
+      <span class="glyphicon glyphicon-user"></span> {% trans "Add Solid" %}
+    </a>
     <h3>Solids</h3>
     <table id="example" class="display" cellspacing="0" width="100%">
         <thead>
@@ -96,6 +102,9 @@
 
 
   <div id="Biologics" class="reagent-tabcontent">
+    <a href="{% url 'join_request' %}" class="btn btn-primary pull-right">
+      <span class="glyphicon glyphicon-user"></span> {% trans "Add Biologic" %}
+    </a>
     <h3>Biologics</h3>
     <table id="example" class="display" cellspacing="0" width="100%">
         <thead>
@@ -124,6 +133,9 @@
 
 
   <div id="Solutions" class="reagent-tabcontent">
+    <a href="{% url 'join_request' %}" class="btn btn-primary pull-right">
+      <span class="glyphicon glyphicon-user"></span> {% trans "Add Solution" %}
+    </a>
     <h3>Solutions</h3>
     <table id="example" class="display" cellspacing="0" width="100%">
         <thead>
@@ -143,6 +155,29 @@
                 <td>{{ solution.liquids.all|join:", " }}</td>
                 <td>{{ solution.solids.all|join:", " }}</td>
                 <td>{{ solution.biologics.all|join:", " }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>
+
+  <div id="Cells" class="reagent-tabcontent">
+    <a href="{% url 'join_request' %}" class="btn btn-primary pull-right">
+      <span class="glyphicon glyphicon-user"></span> {% trans "Add Cell" %}
+    </a>
+    <h3>Cells</h3>
+    <table id="example" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Owner</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cell in cells %}
+            <tr>
+                <td><a href="reagents/cell/{{ cell.id }}" target="_blank">{{ cell.name }}</a></td>
+                <td>{{ cell.owner }}</td>
             </tr>
             {% endfor %}
         </tbody>

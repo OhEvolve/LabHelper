@@ -1,8 +1,12 @@
-from django.db import models
 
 '''
 Models for the reagents app
 '''
+
+from django.db import models
+
+from bootcamp.groups.models import Group
+from bootcamp.authentication.models import Profile
 
 # library imports
 from django.db import models
@@ -57,12 +61,25 @@ class Matter(models.Model):
 
     """ Matter reference object (base class) """
 
-    name = models.CharField(max_length=255)
-    owner = models.CharField(max_length=255,blank=True)
+    name = models.CharField(max_length=255,blank=False)
+    groups = models.ManyToManyField(Group, through='Ownership')
+    creator = models.ForeignKey(Profile,on_delete=models.CASCADE,related_name='creator',default=1)
 
     def __str__(self):
             #return '{} - {}'.format(type(self).__name__,self.name)
             return self.name
+
+class Ownership(models.Model):
+
+    matter = models.ForeignKey(Matter,on_delete=models.CASCADE)
+    group = models.ForeignKey(Group,on_delete=models.CASCADE)
+
+    added = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'Ownership'
+        unique_together = ["matter", "group"]
 
 class Liquid(Matter):
 	

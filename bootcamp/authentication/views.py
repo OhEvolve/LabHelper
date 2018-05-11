@@ -4,6 +4,7 @@ from django.shortcuts import redirect, render
 
 from bootcamp.authentication.forms import SignUpForm
 from bootcamp.feeds.models import Feed
+from bootcamp.groups.models import Group,Membership
 
 
 def signup(request):
@@ -25,6 +26,14 @@ def signup(request):
             # non-native fields
             new_user.job_title = job_title
             new_user.location  = location
+
+            # create private group
+            group = Group.objects.create(group_name="Private",description="{}'s private repository.".format(username),is_private=True)
+            group.save()
+            
+            # force member to join group
+            member = Membership.objects.create(user=new_user,group=group,status=3) 
+            member.save()         
             
             user = authenticate(username=username, password=password)
             login(request, user)
@@ -36,3 +45,6 @@ def signup(request):
     else:
         return render(request, 'authentication/signup.html',
                       {'form': SignUpForm()})
+
+
+
