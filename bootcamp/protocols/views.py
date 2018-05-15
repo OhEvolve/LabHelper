@@ -13,42 +13,73 @@ from django.forms import formset_factory,inlineformset_factory
 from bootcamp.activities.models import Activity
 from bootcamp.decorators import ajax_required
 from bootcamp.reagents.forms import CreateLiquidForm,CreateSolidForm,CreateBiologicForm,CreateSolutionForm,CreateCellForm
-from bootcamp.reagents.models import Liquid,Solid,Biologic,Solution,Cell,Ownership
+from bootcamp.protocols.models import Protocol
 from bootcamp.groups.models import Group
 
 
 @login_required
-def reagents(request):
+def protocols(request):
 	
     user = request.user
     
-    liquids   = Liquid.objects.all()
-    solids    = Solid.objects.all()
-    biologics = Biologic.objects.all()
-    solutions = Solution.objects.all()
-    cells     = Cell.objects.all()
+    print('HERERE')
+    protocols = Protocol.objects.all()
     
-    return render(request, 'reagents/reagents.html', {
-        'liquids':   liquids,
-        'solids':    solids,
-        'biologics': biologics,
-        'solutions': solutions,
-        'cells':     cells,
+    print('PROTOCOLS:',protocols)
+    
+    return render(request, 'protocols/protocols.html', {
+        'protocols': protocols,
         })
 
 
 @login_required
-def create_liquid(request):
-    kwargs = {
-            'tag':'liquid',
-            'form':CreateLiquidForm,
-            'form_vars':{},
-            'model':Liquid,
-            'model_vars':[],
+def create_protocol(request,**settings):
+
+    user = request.user
+
+    # change to accepted groups
+    form_vars = {
+            'user_groups': Group.objects.filter(membership__user__username=user.username),
             }
-    return create_reagent(request,**kwargs)
 
+    if request.method == 'POST':
 
+        form = CreateProtocolForm(request.POST,**form_vars)
+
+        if form.is_valid():
+
+            reagent = Protocol.objects.create()
+
+            reagent.name = form.cleaned_data.get('name')
+            reagent.creator = request.user
+            reagent.save()
+
+            groups = form.cleaned_data.get('groups')
+            ownership = Ownership.objects.create(group=groups,matter=reagent) 
+            ownership.save()         
+            
+            messages.add_message(request,messages.SUCCESS,
+                    'New {} added!'.format(settings['tag'])) 
+
+            return redirect('/reagents')
+            
+        else:
+            return render(request, 'reagents/create_reagent.html', {
+                'form': form,
+                'type': settings['tag'],
+                'url_label': 'create_{}'.format(settings['tag']),
+                'page_label': 'Create {}'.format(settings['tag'].capitalize()),
+            })
+        
+    else:
+
+        form = settings['form'](**form_vars)
+        return render(request, 'reagents/create_reagent.html', {
+            'form': form,
+            'type': settings['tag'],
+            'url_label': 'create_{}'.format(settings['tag']),
+            'page_label': 'Create {}'.format(settings['tag'].capitalize()),
+        })
 
 
 

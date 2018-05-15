@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^settings/deactivate_account/$', core_views.deactivate_account, name='deactivate_account'),
     url(r'^deactivated/$', core_views.deactivated, name='deactivated'),
     url(r'^feeds/', include('bootcamp.feeds.urls')),
+    url(r'^protocols/', include('bootcamp.protocols.urls')),
     url(r'^reagents/', include('bootcamp.reagents.urls')),
     url(r'^questions/', include('bootcamp.questions.urls')),
     url(r'^articles/', include('bootcamp.articles.urls')),

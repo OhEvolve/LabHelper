@@ -64,7 +64,7 @@ class Matter(models.Model):
 
     name = models.CharField(max_length=255,blank=False)
     groups = models.ManyToManyField(Group, through='Ownership')
-    creator = models.ForeignKey(User,on_delete=models.CASCADE,related_name='creator',default=1)
+    creator = models.ForeignKey(User,on_delete=models.CASCADE,related_name='matter_creator',default=1)
 
     def __str__(self):
             #return '{} - {}'.format(type(self).__name__,self.name)

@@ -68,6 +68,7 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     'taggit',
     'channels',
+    'dynamic_formsets',
     #'crispy_forms',
 ]
 LOCAL_APPS = [
@@ -77,8 +78,9 @@ LOCAL_APPS = [
     'bootcamp.core',
     'bootcamp.feeds',
     'bootcamp.messenger',
-    'bootcamp.questions',
+    'bootcamp.protocols',
     'bootcamp.reagents',
+    'bootcamp.questions',
     'bootcamp.search',
     'bootcamp.groups',
 ]

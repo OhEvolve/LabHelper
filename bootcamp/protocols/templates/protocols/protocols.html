@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+
+{% block head %}
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="{% static 'css/w3.css' %}">
+    <link rel="stylesheet" href="{% static 'css/font-Raleway.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/reagent-tab.css' %}">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.css"/>
+	<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.js"/></script>
+
+{% endblock head %}
+
+{% block main %}
+
+  <div class="page-header">
+    <h1>{% trans "Protocols" %}</h1>
+  </div>
+
+{% for message in messages %}
+  <div class="alert alert-success alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    {{ message }}
+  </div>
+{% endfor %}
+
+<div id="protocols" class="tabcontent">
+
+  <div class="reagent-tab">
+    <button class="reagent-tablinks" onclick="openReagentTab(event, 'All')" id="defaultOpen">All</button>
+  </div>
+
+
+
+  <!-- Tab content -->
+  <div id="All" class="reagent-tabcontent">
+    <a href="{% url 'create_protocol' %}" class="btn btn-primary pull-right">
+      <span class="glyphicon glyphicon-plus"></span> {% trans "Add Protocol" %}
+    </a>
+    <h3><br></h3>
+    <table id="example" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Creator</th>
+                <th>Owners</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for protocol in protocols %}
+            <tr>
+                <td><a href="reagents/liquid/{{ liquid.id }}" target="_blank">{{ protocol.name }}</a></td>
+                <td>{{ protocol.creator }}</td>
+                <td>{{ protocol.groups.all|join:", " }}</td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+  </div>
+
+
+
+</div>
+
+
+
+<!-- JavaScript Functions -->
+
+<script type="text/javascript" charset="utf8" src="{% static 'js/main.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'js/reagent-tab.js' %}"></script>
+
+
+
+<!-- JavaScript Initialization -->
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $('table.display').DataTable({
+        "columnDefs": [
+        {"className": "dt-center", "targets": "_all"}
+      ]
+    });
+});
+</script>
+
+</body>
+
+{% endblock main %}
+
+
