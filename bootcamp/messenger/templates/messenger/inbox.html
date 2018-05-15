@@ -3,7 +3,11 @@
 
 {% block title %}{% trans 'Inbox' %}{% endblock %}
 
-{% block page_header %}{% trans 'Inbox' %}{% endblock %}
+{% block page_header %}
+{% trans 'Inbox' %}
+
+
+{% endblock %}
 
 {% block container %}
   {% if users_list|length == 0 %} 

@@ -6,7 +6,8 @@ Models for the reagents app
 from django.db import models
 
 from bootcamp.groups.models import Group
-from bootcamp.authentication.models import Profile
+from bootcamp.authentication.models import Profile # possibly change dependence to this
+from django.contrib.auth.models import User
 
 # library imports
 from django.db import models
@@ -63,7 +64,7 @@ class Matter(models.Model):
 
     name = models.CharField(max_length=255,blank=False)
     groups = models.ManyToManyField(Group, through='Ownership')
-    creator = models.ForeignKey(Profile,on_delete=models.CASCADE,related_name='creator',default=1)
+    creator = models.ForeignKey(User,on_delete=models.CASCADE,related_name='creator',default=1)
 
     def __str__(self):
             #return '{} - {}'.format(type(self).__name__,self.name)
@@ -110,7 +111,7 @@ class Cell(Matter):
    	
    """ Biologic refernce object """
 
-   biologics = models.ManyToManyField(Biologic,through='CellBiologicContent',symmetrical=False)
+   biologics = models.ManyToManyField(Biologic,through='CellContent',symmetrical=False)
    
    species = models.TextField(max_length=255,default='E.Coli')
    morphology = models.CharField(max_length = 5,choices = MORPHOLOGY_CHOICES,default='-----')
@@ -146,7 +147,7 @@ class BiologicContent(models.Model):
     mass       = models.FloatField(default=0)
     mass_units = models.CharField(max_length=4,choices=MASS_UNITS_CHOICES,default=' g/L')
 
-class CellBiologicContent(models.Model):
+class CellContent(models.Model):
     reagent  = models.ForeignKey(Biologic,on_delete=models.CASCADE) # may be wrong on_delete behavior
     cell = models.ForeignKey(Cell,on_delete=models.CASCADE) # may be wrong on_delete behavior
     #media preference, doubling time, morphology, adherent vs suspension, environment, shaken vs. not shaken)

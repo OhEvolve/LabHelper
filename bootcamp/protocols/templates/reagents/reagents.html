@@ -83,8 +83,7 @@
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Creator</th>
-                <th>Owners</th>
+                <th>Owner</th>
                 <th>Molecular Weight</th>
             </tr>
         </thead>
@@ -92,8 +91,7 @@
             {% for solid in solids %}
             <tr>
                 <td><a href="reagents/solid/{{ solid.id }}" target="_blank">{{ solid.name }}</a></td>
-                <td>{{ solid.creator }}</td>
-                <td>{{ solid.groups.all|join:", " }}</td>
+                <td>{{ solid.owner }}</td>
                 <td>{{ solid.mw }} {{ solid.mw_units }}</td>
             </tr>
             {% endfor %}
@@ -112,8 +110,7 @@
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Creator</th>
-                <th>Owners</th>
+                <th>Owner</th>
                 <th>Form</th>
                 <th>Material</th>
                 <th>Shape</th>
@@ -123,8 +120,7 @@
             {% for biologic in biologics %}
             <tr>
                 <td><a href="reagents/biologic/{{ biologic.id }}" target="_blank">{{ biologic.name }}</a></td>
-                <td>{{ biologic.creator }}</td>
-                <td>{{ biologic.groups.all|join:", " }}</td>
+                <td>{{ biologic.owner }}</td>
                 <td>{{ biologic.form}}</td>
                 <td>{{ biologic.material}}</td>
                 <td>{{ biologic.shape}}</td>
@@ -145,8 +141,7 @@
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Creator</th>
-                <th>Owners</th>
+                <th>Owner</th>
                 <th>Liquids</th>
                 <th>Solids</th>
                 <th>Biologics</th>
@@ -157,8 +152,6 @@
             <tr>
                 <td><a href="reagents/solution/{{ solution.id }}" target="_blank">{{ solution.name }}</a></td>
                 <td>{{ solution.owner }}</td>
-                <td>{{ solution.creator }}</td>
-                <td>{{ solution.groups.all|join:", " }}</td>
                 <td>{{ solution.liquids.all|join:", " }}</td>
                 <td>{{ solution.solids.all|join:", " }}</td>
                 <td>{{ solution.biologics.all|join:", " }}</td>
@@ -177,16 +170,14 @@
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Creator</th>
-                <th>Owners</th>
+                <th>Owner</th>
             </tr>
         </thead>
         <tbody>
             {% for cell in cells %}
             <tr>
                 <td><a href="reagents/cell/{{ cell.id }}" target="_blank">{{ cell.name }}</a></td>
-                <td>{{ cell.creator }}</td>
-                <td>{{ cell.groups.all|join:", " }}</td>
+                <td>{{ cell.owner }}</td>
             </tr>
             {% endfor %}
         </tbody>

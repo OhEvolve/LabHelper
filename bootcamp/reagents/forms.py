@@ -35,25 +35,34 @@ class CreateSolidForm(CreateReagentForm):
 
     class Meta:
         model = Solid 
-        fields = ['name', 'groups']
+        fields = ['name', 'groups','mw','mw_units']
 
 class CreateBiologicForm(CreateReagentForm):
 
     class Meta:
         model = Biologic 
-        fields = ['name', 'groups']
+        fields = ['name', 'groups','sequence','form','shape','material']
+
+class CreateBiologicForm(CreateReagentForm):
+
+    class Meta:
+        model = Biologic 
+        fields = ['name', 'groups','sequence','form','shape','material']
 
 class CreateSolutionForm(CreateReagentForm):
 
     class Meta:
-        model = Solution 
-        fields = ['name', 'groups']
+        model = Solution
+        #model = Solution.liquids.through
+        #inlines = (
+        #fields = ['name']
+        fields = ['name', 'groups','liquids','solids','biologics']
 
 class CreateCellForm(CreateReagentForm):
 
     class Meta:
         model = Cell 
-        fields = ['name', 'groups']
+        fields = ['name', 'groups','species','morphology','shaken','media_preference','doubling_time','doubling_time_units','culture_environment']
 
 
 
