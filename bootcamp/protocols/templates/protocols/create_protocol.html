@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
+
+{% load staticfiles %}
 {% load i18n %}
 
 {% block main %}
 
 
   <ol class="breadcrumb">
-    <li><a href="{% url 'create_protocol' %}">{% trans 'Create Protocol' %}</a></li>
+    <li><a href="{% url 'protocols' %}">{% trans 'Protocols' %}</a></li>
     <li class="active">{% trans 'Create Protocol' %}</li>
   </ol>
   <form action="{% url 'create_protocol' %}" method="post" class="form-horizontal" role="form">
@@ -27,12 +29,57 @@
         </div>
       </div>
     {% endfor %}
+
+    {{ formset.management_form }}
+
+    {% for form in formset %}
+        <div class="step-formset">
+            
+
+        {% for field in form.visible_fields %}
+          <div class="form-group{% if field.errors %} has-error{% endif %}">
+            <label for="{{ field.label }}" class="col-sm-2 control-label">{{ field.label }}</label>
+            <div class="col-sm-10">
+              {% if field.label == 'Description' %}
+                {% include 'markdown_editor.html' with textarea='id_description' %}
+              {% endif %}
+              {{ field }}
+              {% if field.help_text %}
+                <span class="help-block">{{ field.help_text }}</span>
+              {% endif %}
+              {% for error in field.errors %}
+                <label class="control-label">{{ error }}</label>
+              {% endfor %}
+            </div>
+          </div>
+          
+
+        {% endfor %}
+    {% endfor %}
+
+    {% if formset.non_form_errors %}
+        {% for error in formset.non_form_errors %}
+            {{ error|escape }}
+        {% endfor %}
+    {% endif %}
+
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
-        <button type="submit" class="btn btn-primary">{% trans page_label %}</button>
+        <button type="submit" class="btn btn-primary">{% trans 'Create Protocol' %}</button>
         <a href="{% url 'protocols' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
       </div>
     </div>
   </form>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="{% static 'js/jquery.formset.js' %}"></script>
+<script>
+    $('.step-formset').formset({
+        addText: 'add link',
+        deleteText: 'remove'
+    });
+</script>
+
+  
 
 {% endblock main %}

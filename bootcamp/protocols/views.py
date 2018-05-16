@@ -8,12 +8,12 @@ from django.db.models import Q
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.urls import reverse_lazy
-from django.forms import formset_factory,inlineformset_factory
+from django.forms import formset_factory,inlineformset_factory,modelformset_factory
 
 from bootcamp.activities.models import Activity
 from bootcamp.decorators import ajax_required
-from bootcamp.protocols.forms import CreateProtocolForm
-from bootcamp.protocols.models import Protocol
+from bootcamp.protocols.forms import CreateProtocolForm,StepForm,BaseStepFormset
+from bootcamp.protocols.models import Protocol,Step
 from bootcamp.groups.models import Group
 
 
@@ -22,10 +22,7 @@ def protocols(request):
 	
     user = request.user
     
-    print('HERERE')
     protocols = Protocol.objects.all()
-    
-    print('PROTOCOLS:',protocols)
     
     return render(request, 'protocols/protocols.html', {
         'protocols': protocols,
@@ -42,9 +39,12 @@ def create_protocol(request,**settings):
             'user_groups': Group.objects.filter(membership__user__username=user.username),
             }
 
+    StepFormset = formset_factory(StepForm, formset=BaseStepFormset)
+
     if request.method == 'POST':
 
         form = CreateProtocolForm(request.POST,**form_vars)
+        formset = StepFormset(request.POST)
 
         if form.is_valid():
 
@@ -64,15 +64,23 @@ def create_protocol(request,**settings):
             return redirect('/reagents')
             
         else:
-            return render(request, 'reagents/create_reagent.html', {
+            return render(request, 'protocols/create_protocol.html', {
                 'form': form,
+                'formset':formset,
             })
         
     else:
 
         form = CreateProtocolForm(**form_vars)
-        return render(request, 'reagents/create_reagent.html', {
+        #formset = StepFormset()
+        formset = modelformset_factory(Step,fields=('name',))
+
+        print(formset)
+        print(type(formset))
+
+        return render(request, 'protocols/create_protocol.html', {
             'form': form,
+            'formset':formset,
         })
 
 
