@@ -2,6 +2,7 @@
 from django import forms
 
 from bootcamp.groups.models import Group
+from bootcamp.protocols.models import Protocol 
 
 
 class CreateProtocolForm(forms.ModelForm):
@@ -11,7 +12,7 @@ class CreateProtocolForm(forms.ModelForm):
     def __init__(self,*args,**kwargs):
 
         user_groups = kwargs.pop('user_groups')
-        super(CreateReagentForm,self).__init__(*args,**kwargs)
+        super(CreateProtocolForm,self).__init__(*args,**kwargs)
         self.fields['groups'].queryset = user_groups
 
     name = forms.CharField(
@@ -23,9 +24,8 @@ class CreateProtocolForm(forms.ModelForm):
         required=True,
         label='Owners')
 
-class CreateLiquidForm(CreateReagentForm):
     class Meta:
-        model = Protocol  
+        model = Protocol 
         fields = ['name', 'groups']
 
 

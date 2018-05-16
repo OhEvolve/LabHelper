@@ -12,7 +12,7 @@ from django.forms import formset_factory,inlineformset_factory
 
 from bootcamp.activities.models import Activity
 from bootcamp.decorators import ajax_required
-from bootcamp.reagents.forms import CreateLiquidForm,CreateSolidForm,CreateBiologicForm,CreateSolutionForm,CreateCellForm
+from bootcamp.protocols.forms import CreateProtocolForm
 from bootcamp.protocols.models import Protocol
 from bootcamp.groups.models import Group
 
@@ -66,19 +66,13 @@ def create_protocol(request,**settings):
         else:
             return render(request, 'reagents/create_reagent.html', {
                 'form': form,
-                'type': settings['tag'],
-                'url_label': 'create_{}'.format(settings['tag']),
-                'page_label': 'Create {}'.format(settings['tag'].capitalize()),
             })
         
     else:
 
-        form = settings['form'](**form_vars)
+        form = CreateProtocolForm(**form_vars)
         return render(request, 'reagents/create_reagent.html', {
             'form': form,
-            'type': settings['tag'],
-            'url_label': 'create_{}'.format(settings['tag']),
-            'page_label': 'Create {}'.format(settings['tag'].capitalize()),
         })
 
 

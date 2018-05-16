@@ -5,10 +5,10 @@
 
 
   <ol class="breadcrumb">
-    <li><a href="{% url 'reagents' %}">{% trans 'Reagents' %}</a></li>
-    <li class="active">{% trans page_label %}</li>
+    <li><a href="{% url 'create_protocol' %}">{% trans 'Create Protocol' %}</a></li>
+    <li class="active">{% trans 'Create Protocol' %}</li>
   </ol>
-  <form action="{% url url_label %}" method="post" class="form-horizontal" role="form">
+  <form action="{% url 'create_protocol' %}" method="post" class="form-horizontal" role="form">
     {% csrf_token %}
     {% for field in form.visible_fields %}
       <div class="form-group{% if field.errors %} has-error{% endif %}">
@@ -30,7 +30,7 @@
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
         <button type="submit" class="btn btn-primary">{% trans page_label %}</button>
-        <a href="{% url 'groups' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
+        <a href="{% url 'protocols' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
       </div>
     </div>
   </form>
