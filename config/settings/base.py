@@ -69,7 +69,7 @@ THIRD_PARTY_APPS = [
     'taggit',
     'channels',
     'dynamic_formsets',
-    #'crispy_forms',
+    'crispy_forms',
 ]
 LOCAL_APPS = [
     'bootcamp.activities',

@@ -73,7 +73,7 @@ def create_protocol(request,**settings):
 
         form = CreateProtocolForm(**form_vars)
         #formset = StepFormset()
-        formset = modelformset_factory(Step,fields=('name',))
+        formset = inlineformset_factory(Protocol,Step,fields=('name',),can_delete=True)
 
         print(formset)
         print(type(formset))
